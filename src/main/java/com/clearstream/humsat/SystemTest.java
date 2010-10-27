@@ -1,4 +1,4 @@
-package com.logica.hummingbird.systemtests;
+package com.clearstream.humsat;
 
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -22,8 +22,8 @@ public class SystemTest extends AbstractJUnit38SpringContextTests {
 		 * data into the standard topics below. We only need to implement the actual checks and
 		 * then exist at some point. */
 	
-//    	while (true) {
-//    		Thread.sleep(1000);
-//    	}
+    	while (true) {
+    		Thread.sleep(1000);
+    	}
 	}
 }

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<!-- @TITLE System Test Validator Component
+		 The validation component configures a set of limits which are applied to the parameters
+		 issued by the system test simulator. In case of violations the corresponding state 
+		 parameters are issued.
+		 @CATEGORY System Test
+		 @END
+	 -->
+
+	<!-- @TITLE Battery Warning Limit (Humsat State Parameter)
+		 The battery warning limit monitors the value of the 'battery' parameter. It will have 
+		 state 'true' as long as the battery value remains above 30, else 'false'.
+		 
+		 To receive the battery warning limit state parameter, create a route with the starting point
+		 *from("activemq:topic:Parameter?selector=Name='batteryWarningLevel'")*.   
+		 @CATEGORY System Test Validator Component
+		 @END
+	
+	 -->
+	<bean id="warningLimit" class="com.logica.hummingbird.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="batteryWarningLevel"/>
+		<constructor-arg index="1" value="30"/>
+	</bean>
+
+	<bean id="errorLimit" class="com.logica.hummingbird.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="batteryErrorLevel"/>
+		<constructor-arg index="1" value="20"/>
+	</bean>
+
+	<bean id="valveLimit" class="com.logica.hummingbird.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="valveWarningLevel"/>
+		<constructor-arg index="1" value="0"/>
+	</bean>
+
+	<routeContext id="validatorRoutes" xmlns="http://camel.apache.org/schema/spring">
+
+		<route>
+			<from uri="activemq:topic:Parameter?selector=Name='battery'" />
+			<to uri="bean:warningLimit?method=processParameter" />
+			<to uri="activemq:topic:Parameter" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameter?selector=Name='batteryWarningLimit'" />
+			<to uri="bean:warningLimit?method=processLimit" />
+			<to uri="activemq:topic:Parameter" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameter?selector=Name='batteryWarningEnabled'" />
+			<to uri="bean:warningLimit?method=processEnabled" />
+			<to uri="activemq:topic:Parameter" />
+		</route>
+
+
+		<route>
+			<from uri="activemq:topic:Parameter?selector=Name='battery'" />
+			<to uri="bean:errorLimit?method=processParameter" />
+			<to uri="activemq:topic:Parameter" />
+		</route>
+				
+		<route>
+			<from uri="activemq:topic:Parameter?selector=Name='batteryErrorLimit'" />
+			<to uri="bean:errorLimit?method=processLimit" />
+			<to uri="activemq:topic:Parameter" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameter?selector=Name='batteryErrorEnabled'" />
+			<to uri="bean:errorLimit?method=processEnabled" />
+			<to uri="activemq:topic:Parameter" />
+		</route>
+
+
+		<route>
+			<from uri="activemq:topic:Parameter?selector=Name='valve'" />
+			<to uri="bean:valveLimit?method=processParameter" />
+			<to uri="activemq:topic:Parameter" />
+		</route>
+				
+		<route>
+			<from uri="activemq:topic:Parameter?selector=Name='valveLimit'" />
+			<to uri="bean:valveLimit?method=processLimit" />
+			<to uri="activemq:topic:Parameter" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameter?selector=Name='valveLimitEnabled'" />
+			<to uri="bean:valveLimit?method=processEnabled" />
+			<to uri="activemq:topic:Parameter" />
+		</route>
+		
+	</routeContext>
+</beans>
