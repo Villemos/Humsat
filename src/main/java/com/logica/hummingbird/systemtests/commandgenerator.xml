@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<bean id="commandgenerator" class="com.logica.hummingbird.command.generator.CommandGenerator">
+		<constructor-arg index="0" ref="context"/>
+		<constructor-arg index="1" value="ValveOn"/>
+		<constructor-arg index="2" value="3000"/>
+	</bean>
+
+	<routeContext id="commandgeneratorRoutes" xmlns="http://camel.apache.org/schema/spring">
+
+		<route>
+			<from uri="timer://commandValve?fixedRate=true&amp;period=1000" />
+			<to uri="bean:commandgenerator" />
+			<to uri="activemq:queue:Commands" />
+		</route>
+		
+	</routeContext>
+</beans>

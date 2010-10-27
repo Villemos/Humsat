@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+	<!--  @TITLE System Test Context
+		  The system test context is a Camel context, i.e. a deifintion of all routes and beans 
+		  of the test system. 
+		  
+		  The system tests runs as a single process, with many different routes connecting the
+		  different parts of the system with each other through ActiveMQ.
+		  
+		  You can monitor the topics and queues through the "ActiveMQ Console":http://localhost:8161/. Notice that
+		  activemq must be running on the local machine for the console as well as the system tests to work. 
+		  To install and start activemq, please see the "ActiveMQ Getting Started Guide":http://activemq.apache.org/getting-started.html.
+		  
+		  The system tests circulates through a well defined sequence of parameters and command generations, 
+		  leading to a well defined expected behaviour. The system test validates that the expected messages
+		  are received and send.
+		  
+		  h2. Extending the System Tests 
+		  
+		  The context is the assembly of a Camel route contexts, included
+		  in the context assembly using the Spring < import resource="file.xml" > capabilities. 
+		  This allows the specification of the system to be split into logical parts, on for
+		  each component.
+		  
+		  To add new elements to the system test, create a new Camel assembly file within the package 
+		  'com.logica.hummingbird.systemtests'. The assembly must use the camel 'routeContext' element
+		  to define the routes, to ensure that they can be included in the system test context.
+		  
+		  For an example, please see @@@.
+		  
+		  h2. Referencing Context and Producer		
+		  
+		  Some of the components needs a reference to the context and/or to the producer template,
+		  to be able to start exchanges and send messages. Both the context and the producer template
+		  has thus been 'id''ed. To reference them in an assembly file, simply use 'ref="context"' or
+		  'ref="producer"'.
+		  
+		  For an example, please see @@@.
+		  		  
+		  @CATEGORY System Test -->
+
+	<import resource="simulator.xml" />
+	<import resource="validator.xml" />
+	<import resource="commandgenerator.xml" />
+	<import resource="commandreleaser.xml" />
+	<import resource="taskexecutor.xml" />
+	
+	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
+		<template id="producer"/>
+	
+		<routeContextRef ref="simulatorRoutes" />
+		<routeContextRef ref="validatorRoutes" />
+		<routeContextRef ref="commandgeneratorRoutes" />
+		<routeContextRef ref="commandreleaserRoutes" />
+		<routeContextRef ref="taskexecutorRoutes" />
+	</camelContext>
+</beans>
