@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<!-- @TITLE System Test Validator Component
+		 The validation component configures a set of limits which are applied to the parameters
+		 issued by the system test simulator. In case of violations the corresponding state 
+		 parameters are issued.
+		 @CATEGORY System Test
+		 @END
+	 -->
+
+	<!-- @TITLE Battery Warning Limit (Humsat State Parameter)
+		 The battery warning limit monitors the value of the 'battery' parameter. It will have 
+		 state 'true' as long as the battery value remains above 30, else 'false'.
+		 
+		 To receive the battery warning limit state parameter, create a route with the starting point
+		 *from("activemq:topic:Parameter?selector=Name='batteryWarningLevel'")*.   
+		 @CATEGORY System Test Validator Component
+		 @END
+	 -->
+	<bean id="velocity.x.warning" class="com.logica.hummingbird.validation.parameter.UpperLimit">
+		<constructor-arg index="0" value="Velocity X Warning"/>
+		<constructor-arg index="1" value="5"/>
+	</bean>
+
+	<bean id="velocity.x.alarm" class="com.logica.hummingbird.validation.parameter.UpperLimit">
+		<constructor-arg index="0" value="Velocity X Error"/>
+		<constructor-arg index="1" value="10"/>
+	</bean>
+
+	<bean id="velocity.y.warning" class="com.logica.hummingbird.validation.parameter.UpperLimit">
+		<constructor-arg index="0" value="Velocity Y Warning"/>
+		<constructor-arg index="1" value="5"/>
+	</bean>
+
+	<bean id="velocity.y.alarm" class="com.logica.hummingbird.validation.parameter.UpperLimit">
+		<constructor-arg index="0" value="Velocity Y Error"/>
+		<constructor-arg index="1" value="10"/>
+	</bean>
+
+	<bean id="temperature.at.sensor.board.warning" class="com.logica.hummingbird.validation.parameter.UpperLimit">
+		<constructor-arg index="0" value="Temperature at Sensor Board Warning"/>
+		<constructor-arg index="1" value="60"/>
+	</bean>
+
+	<bean id="temperature.at.sensor.board.error" class="com.logica.hummingbird.validation.parameter.UpperLimit">
+		<constructor-arg index="0" value="Temperature at Sensor Board Error"/>
+		<constructor-arg index="1" value="90"/>
+	</bean>
+
+	<bean id="temperature.at.cpu.board.warning" class="com.logica.hummingbird.validation.parameter.UpperLimit">
+		<constructor-arg index="0" value="Temperature at CPU Board Warning"/>
+		<constructor-arg index="1" value="60"/>
+	</bean>
+
+	<bean id="temperature.at.cpu.board.error" class="com.logica.hummingbird.validation.parameter.UpperLimit">
+		<constructor-arg index="0" value="Temperature at CPU Board Error"/>
+		<constructor-arg index="1" value="90"/>
+	</bean>
+
+	<bean id="state.of.battery.error" class="com.logica.hummingbird.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="State of Battery Error"/>
+		<constructor-arg index="1" value="0.5"/>
+	</bean>
+
+	<bean id="state.of.state.machine.error" class="com.logica.hummingbird.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="State of State Machine Error"/>
+		<constructor-arg index="1" value="0.0"/>
+	</bean>
+
+	<bean id="state.of.video.stream.error" class="com.logica.hummingbird.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="State of Video Stream Error"/>
+		<constructor-arg index="1" value="0.5"/>
+	</bean>
+
+	<bean id="state.of.payload.error" class="com.logica.hummingbird.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="State of Payload Error"/>
+		<constructor-arg index="1" value="0.5"/>
+	</bean>
+
+
+
+	<routeContext id="validatorRoutes" xmlns="http://camel.apache.org/schema/spring">
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='Velocity X'" />
+			<to uri="bean:velocity.x.warning?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='Velocity X'" />
+			<to uri="bean:velocity.x.alarm?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='Velocity Y'" />
+			<to uri="bean:velocity.y.warning?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='Velocity Y'" />
+			<to uri="bean:velocity.y.alarm?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='Temperature at Sensor Board'" />
+			<to uri="bean:temperature.at.sensor.board.warning?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='Temperature at Sensor Board'" />
+			<to uri="bean:temperature.at.sensor.board.error?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='Temperature at CPU Board'" />
+			<to uri="bean:temperature.at.cpu.board.warning?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='Temperature at CPU Board'" />
+			<to uri="bean:temperature.at.cpu.board.error?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='State of Battery'" />
+			<to uri="bean:state.of.battery.error?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='State of State Machine'" />
+			<to uri="bean:state.of.state.machine.error?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='State of Video Stream'" />
+			<to uri="bean:state.of.video.stream.error?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='State of Payload'" />
+			<to uri="bean:state.of.payload.error?method=processParameter" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+
+		<!-- Enabling / Disabling -->
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='State of State Machine Limit Switch'" />
+			<to uri="bean:state.of.state.machine.error?method=processEnabled" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='State of Video Stream Limit Switch'" />
+			<to uri="bean:state.of.video.stream.error?method=processEnabled" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='State of Payload Limit Switch'" />
+			<to uri="bean:state.of.payload.error?method=processEnabled" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+
+		<!-- Limit changes. -->
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='State of State Machine Limit'" />
+			<to uri="bean:state.of.state.machine.error?method=processLimit" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='State of Video Stream Limit'" />
+			<to uri="bean:state.of.video.stream.error?method=processLimit" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=Name='State of Payload Limit'" />
+			<to uri="bean:state.of.payload.error?method=processLimit" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+		
+	</routeContext>
+</beans>

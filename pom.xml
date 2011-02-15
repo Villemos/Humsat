@@ -8,58 +8,102 @@
 	</parent>
 
 	<groupId>com.logica.hummingbird</groupId>
-	<artifactId>systemtest</artifactId>
+	<artifactId>humsat</artifactId>
+	<packaging>war</packaging>
 	<name>System Test</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<description>Provides system integration tests</description>
 
 	<dependencies>
+		
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-camel</artifactId>
 			<version>5.3.2</version>
-			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jms</artifactId>
-			<version>2.2.0</version>
-			<scope>compile</scope>
 		</dependency>
+
+<!--			<dependency>-->
+<!--				<groupId>org.apache.camel</groupId>-->
+<!--				<artifactId>camel-jetty</artifactId>-->
+<!--				<version>${camel.version}</version>-->
+<!--				<exclusions>-->
+<!--    			    <exclusion>-->
+<!--			        	<groupId>javax.servlet</groupId>-->
+<!--         				<artifactId>servlet-api</artifactId>-->
+<!--        			</exclusion>-->
+<!--      			</exclusions> -->
+<!--			</dependency>-->
+
 		<dependency>
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>
 			<version>1.5.4</version>
 			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.logica.hummingbird</groupId>
 			<artifactId>validation</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.logica.hummingbird</groupId>
 			<artifactId>command-chain</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
+		
+<!--		<dependency>-->
+<!--			<groupId>com.logica.hummingbird</groupId>-->
+<!--			<artifactId>gui-cometd-commanding</artifactId>-->
+<!--			<version>0.0.1-SNAPSHOT</version>-->
+<!--		</dependency>-->
+		
 		<dependency>
 			<groupId>com.logica.hummingbird</groupId>
 			<artifactId>simple-parameter-simulator</artifactId>
 			<version>0.0.3-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>2.5</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		
+<!--		<dependency>-->
+<!--			<groupId>org.apache.camel</groupId>-->
+<!--			<artifactId>camel-cometd</artifactId>-->
+<!--			<version>${camel.version}</version>-->
+<!--			<exclusions>-->
+<!--    		    <exclusion>-->
+<!--			       	<groupId>javax.servlet</groupId>-->
+<!--         			<artifactId>servlet-api</artifactId>-->
+<!--        		</exclusion>-->
+<!--      		</exclusions> 			-->
+<!--		</dependency>-->
+		
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-xstream</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		
 	</dependencies>
   
 </project>

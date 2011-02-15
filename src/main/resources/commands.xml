@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<!-- Tasks of the State Machine -->
+	<!-- long deltaTime, String name, String stateOff, Boolean value -->
+	<bean id="restart.flight.computer.disable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
+		<constructor-arg index="0" value="0"/>
+		<constructor-arg index="1" value="State of State Machine Limit Switch"/>
+		<constructor-arg index="2" value=""/>
+		<constructor-arg index="3" value="false"/>
+	</bean>
+
+	<bean id="double.value.1" class="java.lang.Double">
+		<constructor-arg index="0" value="1"/>		
+	</bean> 
+
+	<bean id="restart.flight.computer.new.limit" class="com.logica.hummingbird.tasks.actions.SetParameter">
+		<constructor-arg index="0" value="0"/>
+		<constructor-arg index="1" value="State of State Machine Limit"/>
+		<constructor-arg index="2" ref="double.value.1"/>
+		<constructor-arg index="3" value="java.lang.Double"/>
+	</bean>
+
+	<bean id="restart.flight.computer.enable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
+		<constructor-arg index="0" value="10000"/>
+		<constructor-arg index="1" value="State of State Machine Limit Switch"/>
+		<constructor-arg index="2" value=""/>
+		<constructor-arg index="3" value="true"/>
+	</bean>
+
+	<!-- Tasks of the Video Camera On -->
+	<!-- long deltaTime, String name, String stateOff, Boolean value -->
+	<bean id="video.camera.on.disable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
+		<constructor-arg index="0" value="0"/>
+		<constructor-arg index="1" value="State of Video Stream Limit Switch"/>
+		<constructor-arg index="2" value=""/>
+		<constructor-arg index="3" value="false"/>
+	</bean>
+
+	<bean id="video.camera.on.new.limit" class="com.logica.hummingbird.tasks.actions.SetParameter">
+		<constructor-arg index="0" value="0"/>
+		<constructor-arg index="1" value="State of Video Stream Limit"/>
+		<constructor-arg index="2" ref="double.value.1"/>
+		<constructor-arg index="3" value="java.lang.Double"/>
+	</bean>
+
+	<bean id="video.camera.on.enable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
+		<constructor-arg index="0" value="5000"/>
+		<constructor-arg index="1" value="State of Video Stream Limit Switch"/>
+		<constructor-arg index="2" value=""/>
+		<constructor-arg index="3" value="true"/>
+	</bean>
+
+	<!-- Tasks of the Video Camera Off -->
+	<!-- long deltaTime, String name, String stateOff, Boolean value -->
+	<bean id="video.camera.off.disable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
+		<constructor-arg index="0" value="0"/>
+		<constructor-arg index="1" value="State of Video Stream Limit Switch"/>
+		<constructor-arg index="2" value=""/>
+		<constructor-arg index="3" value="false"/>
+	</bean>
+
+	<bean id="video.camera.off.new.limit" class="com.logica.hummingbird.tasks.actions.SetParameter">
+		<constructor-arg index="0" value="0"/>
+		<constructor-arg index="1" value="State of Video Stream Limit"/>
+		<constructor-arg index="2" ref="double.value.1"/>
+		<constructor-arg index="3" value="java.lang.Double"/>
+	</bean>
+
+	<bean id="video.camera.off.enable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
+		<constructor-arg index="0" value="5000"/>
+		<constructor-arg index="1" value="State of Video Stream Limit Switch"/>
+		<constructor-arg index="2" value=""/>
+		<constructor-arg index="3" value="true"/>
+	</bean>
+
+	<!-- Tasks of the Payload -->
+	<!-- long deltaTime, String name, String stateOff, Boolean value -->
+	<bean id="deploy.payload.disable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
+		<constructor-arg index="0" value="0"/>
+		<constructor-arg index="1" value="State of Payload Limit Switch"/>
+		<constructor-arg index="2" value=""/>
+		<constructor-arg index="3" value="false"/>
+	</bean>
+
+	<bean id="deploy.payload.new.limit" class="com.logica.hummingbird.tasks.actions.SetParameter">
+		<constructor-arg index="0" value="0"/>
+		<constructor-arg index="1" value="State of Payload Limit"/>
+		<constructor-arg index="2" ref="double.value.1"/>
+		<constructor-arg index="3" value="java.lang.Double"/>
+	</bean>
+
+	<bean id="deploy.payload.enable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
+		<constructor-arg index="0" value="5000"/>
+		<constructor-arg index="1" value="State of Payload Limit Switch"/>
+		<constructor-arg index="2" value=""/>
+		<constructor-arg index="3" value="true"/>
+	</bean>
+
+
+	<!-- String name, String description, String type, long bitLength, String unit, Range range -->
+	<bean id="argument.time" class="com.logica.hummingbird.type.Argument">
+		<constructor-arg index="0" value="Time"/>
+		<constructor-arg index="1" value="The time expressed as milliseconds from 1970."/>
+		<constructor-arg index="2" value="java.lang.Long"/>
+		<constructor-arg index="3" value="64"/>
+		<constructor-arg index="4" value="Milliseconds"/>
+		<constructor-arg index="5"><null/></constructor-arg>	
+	</bean>
+
+
+	<bean id="set.time" class="com.logica.hummingbird.type.CommandDefinition">
+		<constructor-arg index="0" value="Set Time"/>
+		<constructor-arg index="1" value="Sets the onboard time"/>
+		<constructor-arg index="2">
+			<list>
+       		 	<ref bean="argument.time"/>
+    	  	</list>
+		</constructor-arg>
+		<constructor-arg index="3"><list></list></constructor-arg>
+		<constructor-arg index="4"><list></list></constructor-arg>
+	</bean>
+
+	<bean id="restart.flight.computer" class="com.logica.hummingbird.type.CommandDefinition">
+		<constructor-arg index="0" value="Restart Flight Computer"/>
+		<constructor-arg index="1" value="Restarts the flight computer."/>
+		<constructor-arg index="2"><list></list></constructor-arg>
+		<constructor-arg index="3"><list></list></constructor-arg>
+		<constructor-arg index="4">
+			<list>
+			 	<ref bean="restart.flight.computer.disable"/>
+		 	 	<ref bean="restart.flight.computer.new.limit"/>
+	 	 	 	<ref bean="restart.flight.computer.enable"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="video.camera.on" class="com.logica.hummingbird.type.CommandDefinition">
+		<constructor-arg index="0" value="Video Camera On"/>
+		<constructor-arg index="1" value="Turns the video camera 'on', i.e. data will start to flow."/>
+		<constructor-arg index="2"><list></list></constructor-arg>
+		<constructor-arg index="3"><list></list></constructor-arg>
+		<constructor-arg index="4">
+			<list>
+			 	<ref bean="video.camera.on.disable"/>
+		 	 	<ref bean="video.camera.on.new.limit"/>
+	 	 	 	<ref bean="video.camera.on.enable"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="video.camera.off" class="com.logica.hummingbird.type.CommandDefinition">
+		<constructor-arg index="0" value="Video Camera Off"/>
+		<constructor-arg index="1" value="Turns the video camera 'off', i.e. data will cease to flow."/>
+		<constructor-arg index="2"><list></list></constructor-arg>
+		<constructor-arg index="3"><list></list></constructor-arg>
+		<constructor-arg index="4">
+			<list>
+			 	<ref bean="video.camera.off.disable"/>
+		 	 	<ref bean="video.camera.off.new.limit"/>
+	 	 	 	<ref bean="video.camera.off.enable"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="deploy.payload" class="com.logica.hummingbird.type.CommandDefinition">
+		<constructor-arg index="0" value="Deploy Payload"/>
+		<constructor-arg index="1" value="Will launch the payload."/>
+		<constructor-arg index="2"><list></list></constructor-arg>
+		<constructor-arg index="3"><list></list></constructor-arg>
+		<constructor-arg index="4">
+			<list>
+			 	<ref bean="deploy.payload.disable"/>
+		 	 	<ref bean="deploy.payload.new.limit"/>
+	 	 	 	<ref bean="deploy.payload.enable"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="definitions" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="set.time"/>
+				<ref bean="restart.flight.computer"/>
+				<ref bean="video.camera.on"/>
+				<ref bean="video.camera.off"/>
+				<ref bean="deploy.payload"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+</beans>

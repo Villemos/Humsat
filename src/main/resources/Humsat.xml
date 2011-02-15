@@ -48,12 +48,18 @@
 		  For an example, please see @@@.
 		  		  
 		  @CATEGORY System Test -->
+		  
+	<context:annotation-config />
 
-	<import resource="simulator.xml" />
+	<import resource="parameters.xml" />
 	<import resource="validator.xml" />
+	<import resource="commands.xml" />
 	<import resource="commandgenerator.xml" />
 	<import resource="commandreleaser.xml" />
 	<import resource="taskexecutor.xml" />
+	<import resource="logging.xml" />
+	
+	<bean id="converter" class="com.logica.hummingbird.webgui.CometdLogger"/>
 	
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer"/>
@@ -63,5 +69,7 @@
 		<routeContextRef ref="commandgeneratorRoutes" />
 		<routeContextRef ref="commandreleaserRoutes" />
 		<routeContextRef ref="taskexecutorRoutes" />
+		<routeContextRef ref="loggingRoutes" />
+
 	</camelContext>
 </beans>

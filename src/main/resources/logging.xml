@@ -9,22 +9,14 @@
        http://camel.apache.org/schema/spring 
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<bean id="taskexecutor" class="com.logica.hummingbird.command.task.Executor">
-		<constructor-arg index="0" ref="context"/>
-		<constructor-arg index="1" ref="producer"/>
-	</bean>
-
-	<routeContext id="taskexecutorRoutes" xmlns="http://camel.apache.org/schema/spring">
+	<routeContext id="loggingRoutes" xmlns="http://camel.apache.org/schema/spring">
 
 		<route>
-			<from uri="activemq:queue:Tasks" />
-			<to uri="bean:taskexecutor" />
-		</route>
-
-		<route>
-			<from uri="direct:parameters" />
-			<to uri="activemq:topic:Parameter" />
+			<from uri="direct:Logging" />
+			<to uri="activemq:topic:Logging" />
 		</route>
 		
+		
+				
 	</routeContext>
 </beans>

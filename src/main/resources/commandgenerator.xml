@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+	<bean id="commandgenerator" class="com.logica.hummingbird.command.generator.JettyCommandTransformer"/>
+
+	<bean id="springloader" class="com.logica.hummingbird.command.buffer.SpringCommandDefinitionLoader"/>
+	
+	<bean id="buffer" class="com.logica.hummingbird.buffers.CommandBuffer"/>
+
+	<routeContext id="commandgeneratorRoutes" xmlns="http://camel.apache.org/schema/spring">
+
+		<route>
+			<from uri="timer://loader?fixedRate=false&amp;period=0"/>
+			<split>
+				<method ref="springloader" method="process"/>				 
+				<to uri="activemq:topic:CommandDefinitions" />
+			</split>
+		</route>
+
+		<route>
+			<from uri="activemq:topic:CommandDefinitions"/>
+			<to uri="bean:buffer" />
+		</route>		
+
+		<route>
+			<from uri="jetty:http://0.0.0.0:6789/humsat"/>
+			<to uri="bean:commandgenerator" />
+		</route>
+		
+		<route>
+			<from uri="direct:Commands" />			
+			<to uri="activemq:queue:Commands" />
+		</route>
+		
+	</routeContext>
+</beans>

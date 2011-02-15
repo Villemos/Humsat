@@ -9,24 +9,19 @@
        http://camel.apache.org/schema/spring 
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<bean id="commandreleaser" class="com.logica.hummingbird.command.releaser.CommandReleaser">
-		<constructor-arg index="0" ref="context"/>
-		<constructor-arg index="1" ref="producer"/>	
-	</bean>
+	<bean id="taskexecutor" class="com.logica.hummingbird.command.task.Executor"/>
 
-	<routeContext id="commandreleaserRoutes" xmlns="http://camel.apache.org/schema/spring">
+	<routeContext id="taskexecutorRoutes" xmlns="http://camel.apache.org/schema/spring">
 
 		<route>
-			<from uri="activemq:queue:Commands" />
-			<to uri="bean:commandreleaser" />
-			<to uri="activemq:queue:ReleasedCommands" />
+			<from uri="activemq:queue:Tasks" />
+			<to uri="bean:taskexecutor" />
 		</route>
-		
+
 		<route>
-			<from uri="direct:tasks" />
-			<to uri="activemq:queue:Tasks" />
+			<from uri="direct:Parameters" />
+			<to uri="activemq:topic:Parameters" />
 		</route>
-		
 		
 	</routeContext>
 </beans>

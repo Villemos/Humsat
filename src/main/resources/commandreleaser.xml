@@ -9,19 +9,28 @@
        http://camel.apache.org/schema/spring 
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<bean id="commandgenerator" class="com.logica.hummingbird.command.generator.CommandGenerator">
-		<constructor-arg index="0" ref="context"/>
-		<constructor-arg index="1" value="ValveOn"/>
-		<constructor-arg index="2" value="3000"/>
-	</bean>
+	<bean id="commandreleaser" class="com.logica.hummingbird.command.releaser.CommandReleaser"/>
 
-	<routeContext id="commandgeneratorRoutes" xmlns="http://camel.apache.org/schema/spring">
+	<bean id="stateBuffer" class="com.logica.hummingbird.buffers.StateBuffer"/>
+
+	<routeContext id="commandreleaserRoutes" xmlns="http://camel.apache.org/schema/spring">
 
 		<route>
-			<from uri="timer://commandValve?fixedRate=true&amp;period=1000" />
-			<to uri="bean:commandgenerator" />
-			<to uri="activemq:queue:Commands" />
+			<from uri="activemq:topic:Parameters?selector=Type='State Parameter'"/>
+			<to uri="bean:stateBuffer"/>
 		</route>
+
+		<route>
+			<from uri="activemq:queue:Commands" />
+			<to uri="bean:commandreleaser" />
+			<to uri="activemq:queue:ReleasedCommands" />
+		</route>
+		
+		<route>
+			<from uri="direct:tasks" />
+			<to uri="activemq:queue:Tasks" />
+		</route>
+		
 		
 	</routeContext>
 </beans>
