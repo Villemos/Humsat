@@ -16,6 +16,7 @@
 		<constructor-arg index="1" value="State of State Machine Limit Switch"/>
 		<constructor-arg index="2" value=""/>
 		<constructor-arg index="3" value="false"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<bean id="double.value.1" class="java.lang.Double">
@@ -27,6 +28,7 @@
 		<constructor-arg index="1" value="State of State Machine Limit"/>
 		<constructor-arg index="2" ref="double.value.1"/>
 		<constructor-arg index="3" value="java.lang.Double"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<bean id="restart.flight.computer.enable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
@@ -34,6 +36,7 @@
 		<constructor-arg index="1" value="State of State Machine Limit Switch"/>
 		<constructor-arg index="2" value=""/>
 		<constructor-arg index="3" value="true"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<!-- Tasks of the Video Camera On -->
@@ -43,6 +46,7 @@
 		<constructor-arg index="1" value="State of Video Stream Limit Switch"/>
 		<constructor-arg index="2" value=""/>
 		<constructor-arg index="3" value="false"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<bean id="video.camera.on.new.limit" class="com.logica.hummingbird.tasks.actions.SetParameter">
@@ -50,6 +54,7 @@
 		<constructor-arg index="1" value="State of Video Stream Limit"/>
 		<constructor-arg index="2" ref="double.value.1"/>
 		<constructor-arg index="3" value="java.lang.Double"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<bean id="video.camera.on.enable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
@@ -57,6 +62,7 @@
 		<constructor-arg index="1" value="State of Video Stream Limit Switch"/>
 		<constructor-arg index="2" value=""/>
 		<constructor-arg index="3" value="true"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<!-- Tasks of the Video Camera Off -->
@@ -66,6 +72,7 @@
 		<constructor-arg index="1" value="State of Video Stream Limit Switch"/>
 		<constructor-arg index="2" value=""/>
 		<constructor-arg index="3" value="false"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<bean id="video.camera.off.new.limit" class="com.logica.hummingbird.tasks.actions.SetParameter">
@@ -73,6 +80,7 @@
 		<constructor-arg index="1" value="State of Video Stream Limit"/>
 		<constructor-arg index="2" ref="double.value.1"/>
 		<constructor-arg index="3" value="java.lang.Double"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<bean id="video.camera.off.enable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
@@ -80,6 +88,7 @@
 		<constructor-arg index="1" value="State of Video Stream Limit Switch"/>
 		<constructor-arg index="2" value=""/>
 		<constructor-arg index="3" value="true"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<!-- Tasks of the Payload -->
@@ -89,6 +98,7 @@
 		<constructor-arg index="1" value="State of Payload Limit Switch"/>
 		<constructor-arg index="2" value=""/>
 		<constructor-arg index="3" value="false"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<bean id="deploy.payload.new.limit" class="com.logica.hummingbird.tasks.actions.SetParameter">
@@ -96,6 +106,7 @@
 		<constructor-arg index="1" value="State of Payload Limit"/>
 		<constructor-arg index="2" ref="double.value.1"/>
 		<constructor-arg index="3" value="java.lang.Double"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 	<bean id="deploy.payload.enable" class="com.logica.hummingbird.tasks.actions.SetStateParameter">
@@ -103,6 +114,7 @@
 		<constructor-arg index="1" value="State of Payload Limit Switch"/>
 		<constructor-arg index="2" value=""/>
 		<constructor-arg index="3" value="true"/>
+		<constructor-arg index="4" value=""/>
 	</bean>
 
 

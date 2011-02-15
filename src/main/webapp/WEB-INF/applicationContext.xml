@@ -13,12 +13,13 @@
 
 	<import resource="classpath:parameters.xml" />
 	<import resource="classpath:validator.xml" />
-<!--	<import resource="classpath:commands.xml" />-->
-<!--	<import resource="classpath:commandgenerator.xml" />-->
-<!--	<import resource="classpath:commandreleaser.xml" />-->
+	<import resource="classpath:commands.xml" />
+	<import resource="classpath:commandgenerator.xml" />
+	<import resource="classpath:commandreleaser.xml" />
 	<import resource="classpath:taskexecutor.xml" />
 	<import resource="classpath:logging.xml" />
-	
+	<import resource="classpath:jsonpublish.xml" />
+		
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer"/>
 	
@@ -30,6 +31,7 @@
 
 		<routeContextRef ref="taskexecutorRoutes" />
 		<routeContextRef ref="loggingRoutes" />
+		<routeContextRef ref="jsonPublishRoutes" />
 
 	</camelContext>
 	
