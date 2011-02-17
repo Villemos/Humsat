@@ -18,6 +18,12 @@
 			<to uri="bean:jsonmapper"/>
 			<to uri="cometd://0.0.0.0:8086/parameter/live"/>
 		</route>
+
+		<route>
+			<from uri="activemq:topic:Logs" />
+			<to uri="bean:jsonmapper"/>
+			<to uri="cometd://0.0.0.0:8086/logs/live"/>
+		</route>
 				
 	</routeContext>
 </beans>

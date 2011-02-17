@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<context:annotation-config />
+
+	<import resource="classpath:humsat-parameters.xml" />
+	<import resource="classpath:humsat-validator.xml" />
+	<import resource="classpath:humsat-commands.xml" />
+<!--	<import resource="classpath:commandgenerator.xml" />-->
+	<import resource="classpath:commandreleaser.xml" />
+	<import resource="classpath:taskexecutor.xml" />
+	<import resource="classpath:logging.xml" />
+	<import resource="classpath:jsonpublish.xml" />
+		
+	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
+		<template id="producer"/>
+	
+		<routeContextRef ref="simulatorRoutes" />
+		<routeContextRef ref="validatorRoutes" />
+<!--		<routeContextRef ref="commandgeneratorRoutes" />-->
+		<routeContextRef ref="commandreleaserRoutes" />
+		<routeContextRef ref="taskexecutorRoutes" />
+		<routeContextRef ref="loggingRoutes" />
+		<routeContextRef ref="jsonPublishRoutes" />
+
+	</camelContext>
+	
+</beans>

@@ -51,7 +51,7 @@
 		</route>
 
 		<route>
-			<from uri="activemq:topic:Parameters?selector=Name='Battery State'" />
+			<from uri="activemq:topic:Parameters?selector=Name='Battery Voltage'" />
 			<to uri="bean:state.of.battery.error?method=processParameter" />
 			<to uri="activemq:topic:Parameters" />
 		</route>

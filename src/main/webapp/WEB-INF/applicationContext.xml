@@ -11,9 +11,9 @@
 
 	<context:annotation-config />
 
-	<import resource="classpath:parameters.xml" />
-	<import resource="classpath:validator.xml" />
-	<import resource="classpath:commands.xml" />
+	<import resource="classpath:humsat-parameters.xml" />
+	<import resource="classpath:humsat-validator.xml" />
+	<import resource="classpath:humsat-commands.xml" />
 	<import resource="classpath:commandgenerator.xml" />
 	<import resource="classpath:commandreleaser.xml" />
 	<import resource="classpath:taskexecutor.xml" />
@@ -25,10 +25,8 @@
 	
 		<routeContextRef ref="simulatorRoutes" />
 		<routeContextRef ref="validatorRoutes" />
-
-<!--		<routeContextRef ref="commandgeneratorRoutes" />-->
-<!--		<routeContextRef ref="commandreleaserRoutes" />-->
-
+		<routeContextRef ref="commandgeneratorRoutes" />
+		<routeContextRef ref="commandreleaserRoutes" />
 		<routeContextRef ref="taskexecutorRoutes" />
 		<routeContextRef ref="loggingRoutes" />
 		<routeContextRef ref="jsonPublishRoutes" />

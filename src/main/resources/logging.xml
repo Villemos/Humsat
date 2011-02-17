@@ -13,10 +13,8 @@
 
 		<route>
 			<from uri="direct:Logging" />
-			<to uri="activemq:topic:Logging" />
+			<to uri="activemq:topic:Logs" />
 		</route>
 		
-		
-				
 	</routeContext>
 </beans>

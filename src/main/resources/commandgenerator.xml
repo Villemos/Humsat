@@ -31,10 +31,10 @@
 			<to uri="bean:buffer" />
 		</route>		
 
-		<route>
-			<from uri="jetty:http://0.0.0.0:6789/humsat"/>
-			<to uri="bean:commandgenerator" />
-		</route>
+<!--		<route>-->
+<!--			<from uri="servlet:///humsat/commands?servletName=CamelServlet"/>-->
+<!--			<to uri="bean:commandgenerator" />-->
+<!--		</route>-->
 		
 		<route>
 			<from uri="direct:Commands" />			

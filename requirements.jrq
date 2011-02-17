@@ -3,6 +3,11 @@
 <requirements>
 <info>
 <external-file-info>
+<project></project>
+<file></file>
+<file-type></file-type>
+<import-info>
+</import-info>
 </external-file-info>
 </info>
 <requirement>
@@ -15,7 +20,7 @@
 <must-have><![CDATA[No]]></must-have>
 <description><![CDATA[]]></description>
 <notes><![CDATA[]]></notes>
-<test-case-methods><![CDATA[com.logica.hummingbird.example.TestExampleEndpoint.testExampleExchangeHandling,com.logica.hummingbird.integrationtests.ExampleFilterTest.testSendMatchingMessage,com.logica.hummingbird.integrationtests.ExampleFilterTest.testSendNotMatchingMessage]]></test-case-methods>
+<test-case-methods><![CDATA[com.logica.hummingbird.example.TestExampleEndpoint.testExampleExchangeHandling,com.logica.hummingbird.integrationtests.ExampleFilterTest.testSendMatchingMessage,com.logica.hummingbird.integrationtests.ExampleFilterTest.testSendNotMatchingMessage,com.logica.hummingbird.util.BitSetUtilityTest.testBitSetToBinaryString2]]></test-case-methods>
 <dependencies><![CDATA[]]></dependencies>
 </requirement>
 </requirements>

@@ -18,24 +18,49 @@
 		<constructor-arg index="4" value="600000"/>
 		<constructor-arg index="5" value="CPU Temperature"/>
 		<constructor-arg index="6" value="The Temperature at CPU Sensor Board"/>
+		<constructor-arg index="7" value="Celsius"/>
 	</bean>
 
 	<bean id="voltage.of.battery" class="com.logica.hummingbird.simpleparametersimulator.ConstantParameter">
 		<constructor-arg index="0" value="120"/>
 		<constructor-arg index="1" value="Battery Voltage"/>
 		<constructor-arg index="2" value="The Voltage of the Battery"/>
+		<constructor-arg index="3" value="Volt"/>
 	</bean>
 
 	<bean id="state.of.video.stream" class="com.logica.hummingbird.simpleparametersimulator.ConstantParameter">
 		<constructor-arg index="0" value="1"/>
 		<constructor-arg index="1" value="Video Stream State"/>
-		<constructor-arg index="2" value="The State of the Video Stream"/>
+		<constructor-arg index="2" value="The State of the Video Stream. '1' means enabled. '0' means disabled."/>
+		<constructor-arg index="3" value=""/>
 	</bean>
 	
 	<bean id="state.of.payload" class="com.logica.hummingbird.simpleparametersimulator.ConstantParameter">
 		<constructor-arg index="0" value="1"/>
 		<constructor-arg index="1" value="Payload State"/>
-		<constructor-arg index="2" value="The State of the Payload"/>
+		<constructor-arg index="2" value="The State of the Payload. '1' means enabled. '0' means disabled."/>
+		<constructor-arg index="3" value=""/>
+	</bean>
+
+	<bean id="state.of.payload.deployment" class="com.logica.hummingbird.simpleparametersimulator.ConstantParameter">
+		<constructor-arg index="0" value="1"/>
+		<constructor-arg index="1" value="Payload Deployment State"/>
+		<constructor-arg index="2" value="The State of the Payload Deployment. '1' means deployed. '0' means not-deployed."/>
+		<constructor-arg index="3" value=""/>
+	</bean>
+
+	<bean id="main.satellite.switch" class="com.logica.hummingbird.simpleparametersimulator.ConstantParameter">
+		<constructor-arg index="0" value="1"/>
+		<constructor-arg index="1" value="Satellite Main Switch"/>
+		<constructor-arg index="2" value="The main switch of the satellite. '1' means enabled. '0' means disabled."/>
+		<constructor-arg index="3" value=""/>
+	</bean>
+
+	<bean id="state.of.transmitter" class="com.logica.hummingbird.simpleparametersimulator.ConstantParameter">
+		<constructor-arg index="0" value="1"/>
+		<constructor-arg index="1" value="State of Transmitter"/>
+		<constructor-arg index="2" value="The state of the onboard transmitter. '1' means enabled. '0' means disabled."/>
+		<constructor-arg index="3" value=""/>
 	</bean>
 
 	<bean id="longitude" class="com.logica.hummingbird.simpleparametersimulator.SinusCurveParameter">
@@ -46,6 +71,7 @@
 		<constructor-arg index="4" value="600000"/>
 		<constructor-arg index="5" value="Longitude"/>
 		<constructor-arg index="6" value="The longitude of the satellite"/>
+		<constructor-arg index="7" value="Degree"/>
 	</bean>
 
 	<bean id="latitude" class="com.logica.hummingbird.simpleparametersimulator.SinusCurveParameter">
@@ -56,6 +82,7 @@
 		<constructor-arg index="4" value="600000"/>
 		<constructor-arg index="5" value="Latitude"/>
 		<constructor-arg index="6" value="The latitude of the satellite"/>
+		<constructor-arg index="7" value="Degree"/>
 	</bean>
 
 	<bean id="elevation" class="com.logica.hummingbird.simpleparametersimulator.SinusCurveParameter">
@@ -66,11 +93,19 @@
 		<constructor-arg index="4" value="600000"/>
 		<constructor-arg index="5" value="Elevation"/>
 		<constructor-arg index="6" value="The elevation of teh satellite"/>
+		<constructor-arg index="7" value="Degree"/>
 	</bean>
 
 	<bean id="time" class="com.logica.hummingbird.simpleparametersimulator.TimeParameter">
 		<constructor-arg index="0" value="Time"/>
-		<constructor-arg index="0" value="The current onboard time."/>
+		<constructor-arg index="1" value="The current onboard time."/>
+		<constructor-arg index="2" value="Millisecond"/>
+	</bean>
+
+	<bean id="delta.time" class="com.logica.hummingbird.simpleparametersimulator.DeltaTimeParameter">
+		<constructor-arg index="0" value="Delta Release Time"/>
+		<constructor-arg index="1" value="The delta time since release of the satellite from the launcher."/>
+		<constructor-arg index="2" value="Millisecond"/>
 	</bean>
 
 
@@ -83,13 +118,13 @@
 		</route>
 
 		<route>
-			<from uri="timer://state.of.battery?fixedRate=true&amp;period=1000" />
-			<to uri="bean:state.of.battery" />
+			<from uri="timer://voltage.of.battery?fixedRate=true&amp;period=1000" />
+			<to uri="bean:voltage.of.battery" />
 			<to uri="activemq:topic:Parameters" />
 		</route>
 
 		<route>
-			<from uri="timer://state.of.video.streamfixedRate=true&amp;period=1000" />
+			<from uri="timer://state.of.video.stream?fixedRate=true&amp;period=1000" />
 			<to uri="bean:state.of.video.stream" />
 			<to uri="activemq:topic:Parameters" />
 		</route>
@@ -97,6 +132,24 @@
 		<route>
 			<from uri="timer://state.of.payload?fixedRate=true&amp;period=1000" />
 			<to uri="bean:state.of.payload" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="timer://state.of.payload.deployment?fixedRate=true&amp;period=1000" />
+			<to uri="bean:state.of.payload.deployment" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="timer://main.satellite.switch?fixedRate=true&amp;period=1000" />
+			<to uri="bean:main.satellite.switch" />
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="timer://state.of.transmitter?fixedRate=true&amp;period=1000" />
+			<to uri="bean:state.of.transmitter" />
 			<to uri="activemq:topic:Parameters" />
 		</route>
 
@@ -115,6 +168,12 @@
 		<route>
 			<from uri="timer://elevation?fixedRate=true&amp;period=1000" />
 			<to uri="bean:elevation" />	
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="timer://delta.time?fixedRate=true&amp;period=1000" />
+			<to uri="bean:delta.time" />	
 			<to uri="activemq:topic:Parameters" />
 		</route>
 		
