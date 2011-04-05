@@ -11,26 +11,27 @@
 
 	<context:annotation-config />
 
-	<import resource="classpath:humsat-parameters.xml" />
+	<import resource="classpath:humsat-commanding.xml" />
+	<import resource="classpath:humsat-simulator.xml" />
 	<import resource="classpath:humsat-validator.xml" />
-	<import resource="classpath:humsat-commands.xml" />
-	<import resource="classpath:commandgenerator.xml" />
-	<import resource="classpath:commandreleaser.xml" />
-	<import resource="classpath:taskexecutor.xml" />
-	<import resource="classpath:logging.xml" />
-	<import resource="classpath:jsonpublish.xml" />
-		
+	<import resource="classpath:humsat-taskexecutor.xml" />
+	<import resource="classpath:humsat-logging.xml" />
+	<import resource="classpath:humsat-orbitalprediction.xml" />
+	<import resource="classpath:humsat-metadata-publisher.xml" />
+	<import resource="classpath:humsat-jsonpublish.xml" />	
+	
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer"/>
 	
 		<routeContextRef ref="simulatorRoutes" />
 		<routeContextRef ref="validatorRoutes" />
-		<routeContextRef ref="commandgeneratorRoutes" />
 		<routeContextRef ref="commandreleaserRoutes" />
 		<routeContextRef ref="taskexecutorRoutes" />
 		<routeContextRef ref="loggingRoutes" />
-		<routeContextRef ref="jsonPublishRoutes" />
-
+		<routeContextRef ref="orbitalpredictionRoutes" />
+		<routeContextRef ref="metadatapublisherRoutes"/>
+		<routeContextRef ref="jsonPublishRoutes"/>
+		
 	</camelContext>
 	
 </beans>

@@ -34,10 +34,9 @@ public class Humsat {
 				Thread.sleep(5000);
 			}
 			catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("Alive!");
+			logger.info("Humsat is Alive!");
 		}
 	}
 }

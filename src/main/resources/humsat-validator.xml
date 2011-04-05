@@ -9,29 +9,36 @@
        http://camel.apache.org/schema/spring 
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<bean id="temperature.at.cpu.board.warning" class="com.logica.hummingbird.validation.parameter.UpperLimit">
+	<context:annotation-config/>
+	
+	<bean id="temperature.at.cpu.board.warning" class="org.hbird.business.validation.parameter.UpperLimit">
 		<constructor-arg index="0" value="Temperature at CPU Board Warning"/>
-		<constructor-arg index="1" value="60"/>
+		<constructor-arg index="1" value=""/>
+		<constructor-arg index="2" value="60"/>
 	</bean>
 
-	<bean id="temperature.at.cpu.board.error" class="com.logica.hummingbird.validation.parameter.UpperLimit">
+	<bean id="temperature.at.cpu.board.error" class="org.hbird.business.validation.parameter.UpperLimit">
 		<constructor-arg index="0" value="Temperature at CPU Board Error"/>
-		<constructor-arg index="1" value="90"/>
+		<constructor-arg index="1" value=""/>
+		<constructor-arg index="2" value="90"/>
 	</bean>
 
-	<bean id="state.of.battery.error" class="com.logica.hummingbird.validation.parameter.LowerLimit">
+	<bean id="state.of.battery.error" class="org.hbird.business.validation.parameter.LowerLimit">
 		<constructor-arg index="0" value="State of Battery Error"/>
-		<constructor-arg index="1" value="0.5"/>
+		<constructor-arg index="1" value=""/>
+		<constructor-arg index="2" value="0.5"/>
 	</bean>
 
-	<bean id="state.of.video.stream.error" class="com.logica.hummingbird.validation.parameter.LowerLimit">
+	<bean id="state.of.video.stream.error" class="org.hbird.business.validation.parameter.LowerLimit">
 		<constructor-arg index="0" value="State of Video Stream Error"/>
-		<constructor-arg index="1" value="0.5"/>
+		<constructor-arg index="1" value=""/>
+		<constructor-arg index="2" value="0.5"/>
 	</bean>
 
-	<bean id="state.of.payload.error" class="com.logica.hummingbird.validation.parameter.LowerLimit">
+	<bean id="state.of.payload.error" class="org.hbird.business.validation.parameter.LowerLimit">
 		<constructor-arg index="0" value="State of Payload Error"/>
-		<constructor-arg index="1" value="0.5"/>
+		<constructor-arg index="1" value=""/>
+		<constructor-arg index="2" value="0.5"/>
 	</bean>
 
 

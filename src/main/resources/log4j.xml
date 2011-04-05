@@ -4,7 +4,7 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
 	<!--	APPENDERS-->	
-	<appender name="ACTIVEMQ" class="com.logica.hummingbird.logger.ActivemqAppender">
+	<appender name="ACTIVEMQ" class="org.hbird.exchange.logger.ActivemqAppender">
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%p - %C{1}.%M(%L) | %m%n" />
 		</layout>
@@ -19,7 +19,7 @@
 	<appender name="LOGFILE" class="org.apache.log4j.RollingFileAppender">
 		<param name="maxFileSize" value="10MB" />
 		<param name="maxBackupIndex" value="5" />
-		<param name="file" value="logs/Thunderbird.log" />
+		<param name="file" value="logs/Humsat.log" />
 		<param name="append" value="true" />
 		<param name="encoding" value="UTF-8" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -36,8 +36,8 @@
 		<level value="INFO" />
 	</logger>
 	
-	<logger name="com.logica.hummingbird">
-		<level value="INFO"/>
+	<logger name="org.hbird">
+		<level value="DEBUG"/>
 		<appender-ref ref="ACTIVEMQ" />
 	</logger>
 	
@@ -46,6 +46,7 @@
 	<root>
 		<level value="INFO" />
 		<appender-ref ref="CONSOLE" />		
+		<appender-ref ref="LOGFILE" />
 	</root>
 
 </log4j:configuration>

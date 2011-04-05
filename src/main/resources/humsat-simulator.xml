@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<context:annotation-config/>
+	
+	<import resource="classpath:humsat-metadata-locations.xml" />
+	<import resource="classpath:humsat-metadata-satellite.xml" />
+	
+	<!-- String name, String description, String unit, double angularFrequency, double amplitude, double phase, double intercept, long modolus -->
+	<bean id="temperature.at.cpu.board" class="org.hbird.business.simpleparametersimulator.SinusCurveParameter">
+		<constructor-arg index="0" value="CPU Temperature"/>
+		<constructor-arg index="1" value="The Temperature at CPU Sensor Board"/>
+		<constructor-arg index="2" value="Celsius"/>
+		<constructor-arg index="3" value="0.000010472"/>
+		<constructor-arg index="4" value="30"/>
+		<constructor-arg index="5" value="3.141592654"/>
+		<constructor-arg index="6" value="55"/>
+		<constructor-arg index="7" value="600000"/>
+	</bean>
+
+	<bean id="voltage.of.battery" class="org.hbird.business.simpleparametersimulator.ConstantParameter">
+		<constructor-arg index="0" value="Battery Voltage"/>
+		<constructor-arg index="1" value="The Voltage of the Battery"/>
+		<constructor-arg index="2" value="Volt"/>
+		<constructor-arg index="3" value="120"/>
+	</bean>
+
+	<bean id="state.of.video.stream" class="org.hbird.business.simpleparametersimulator.ConstantParameter">
+		<constructor-arg index="0" value="Video Stream State"/>
+		<constructor-arg index="1" value="The State of the Video Stream. '1' means enabled. '0' means disabled."/>
+		<constructor-arg index="2" value="State"/>
+		<constructor-arg index="3" value="1"/>
+	</bean>
+	
+	<bean id="state.of.payload" class="org.hbird.business.simpleparametersimulator.ConstantParameter">
+		<constructor-arg index="0" value="Payload State"/>
+		<constructor-arg index="1" value="The State of the Payload. '1' means enabled. '0' means disabled."/>
+		<constructor-arg index="2" value="State"/>
+		<constructor-arg index="3" value="1"/>
+	</bean>
+
+	<bean id="state.of.payload.deployment" class="org.hbird.business.simpleparametersimulator.ConstantParameter">
+		<constructor-arg index="0" value="Payload Deployment State"/>
+		<constructor-arg index="1" value="The State of the Payload Deployment. '1' means deployed. '0' means not-deployed."/>
+		<constructor-arg index="2" value="State"/>
+		<constructor-arg index="3" value="1"/>
+	</bean>
+
+	<bean id="main.satellite.switch" class="org.hbird.business.simpleparametersimulator.ConstantParameter">
+		<constructor-arg index="0" value="Satellite Main Switch"/>
+		<constructor-arg index="1" value="The main switch of the satellite. '1' means enabled. '0' means disabled."/>
+		<constructor-arg index="2" value="State"/>
+		<constructor-arg index="3" value="1"/>
+	</bean>
+
+	<bean id="state.of.transmitter" class="org.hbird.business.simpleparametersimulator.ConstantParameter">
+		<constructor-arg index="0" value="State of Transmitter"/>
+		<constructor-arg index="1" value="The state of the onboard transmitter. '1' means enabled. '0' means disabled."/>
+		<constructor-arg index="2" value="State"/>
+		<constructor-arg index="3" value="1"/>
+	</bean>
+
+	<bean id="time" class="org.hbird.business.simpleparametersimulator.TimeParameter">
+		<constructor-arg index="0" value="Time"/>
+		<constructor-arg index="1" value="The current onboard time."/>
+		<constructor-arg index="2" value="Millisecond"/>
+	</bean>
+
+
+	<!-- The beans required to simulate the satellite orbit.  -->
+	<bean id="orbit.simulator" class="org.hbird.business.navigation.OrbitPredictor">
+		<constructor-arg index="0" value="src/main/webapp/WEB-INF"/>
+	</bean>
+	
+	
+	<bean id="initial.velocity" class="org.hbird.exchange.type.D3Vector">
+		<constructor-arg index="0" value="Satellite Velocity"/>
+		<constructor-arg index="1" value=""/>
+		<constructor-arg index="2" value="505.8479685"/>
+		<constructor-arg index="3" value="942.7809215"/>
+		<constructor-arg index="4" value="7435.922231"/>	
+	</bean>
+
+	<!-- String name, String description, long timestamp, long datasetidentifier, D3Vector position, D3Vector velocity -->
+	<bean id="initial.orbitalstate" class="org.hbird.exchange.orbital.OrbitalState">
+		<constructor-arg index="0" value="Initial Orbital State"/>
+		<constructor-arg index="1" value="The initial state of Humsat"/>
+		<constructor-arg index="2" value="0"/>
+		<constructor-arg index="3" value="0"/>
+		<constructor-arg index="4" ref="position.middleofatlantic"/>
+		<constructor-arg index="5" ref="initial.velocity"/>
+	</bean>
+
+	<!-- Satellite satellite, OrbitalState state, List<Location> locations -->
+	<bean id="orbit.scheduler" class="org.hbird.exchange.orbital.OrbitalStateScheduler">
+		<constructor-arg index="0" value="Measured"/>
+		<constructor-arg index="1" ref="satellite"/>
+		<constructor-arg index="2" ref="initial.orbitalstate"/>
+		<constructor-arg index="3">
+			<list>
+				<ref bean="location.darmstadt"/>
+				<ref bean="location.newdelhi"/>
+				<ref bean="location.houston"/>
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="orbitalstate.release.scheduler" class="org.hbird.exchange.jms.MessageReleaseScheduler">
+		<property name="fields">
+			<list>
+				<value>timestamp</value>
+			</list>
+		</property>
+	</bean>	
+
+	<bean id="header.mapper" class="org.hbird.exchange.jms.AllFields"/>
+
+	<routeContext id="simulatorRoutes" xmlns="http://camel.apache.org/schema/spring"> 
+
+		<route>
+			<from uri="timer://orbitalstate?fixedRate=true&amp;period=86400000" />
+			<to uri="bean:orbit.scheduler?method=process"/>
+			<to uri="bean:orbit.simulator"/>
+		</route>
+		
+		<route>
+			<from uri="direct:OrbitPredictions"/>
+			<multicast>
+				<to uri="bean:orbit.scheduler?method=processOrbitalState"/>
+				<to uri="direct:OrbitalStateScheduler" />
+			</multicast>
+		</route>
+
+		<route>
+			<from uri="direct:OrbitalStateScheduler"/>
+			<to uri="bean:orbitalstate.release.scheduler"/>
+			<to uri="bean:header.mapper"/>
+			<to uri="activemq:topic:OrbitalPredictions" />
+		</route>
+		
+<!--		<route>-->
+<!--			<from uri="timer://temperature.at.cpu.board?fixedRate=true&amp;period=1000" />-->
+<!--			<to uri="bean:temperature.at.cpu.board" />-->
+<!--			<to uri="bean:header.mapper"/>-->
+<!--			<to uri="activemq:topic:Parameters" />-->
+<!--		</route>-->
+<!---->
+<!--		<route>-->
+<!--			<from uri="timer://voltage.of.battery?fixedRate=true&amp;period=1000" />-->
+<!--			<to uri="bean:voltage.of.battery" />-->
+<!--			<to uri="bean:header.mapper"/>-->
+<!--			<to uri="activemq:topic:Parameters" />-->
+<!--		</route>-->
+<!---->
+<!--		<route>-->
+<!--			<from uri="timer://state.of.video.stream?fixedRate=true&amp;period=1000" />-->
+<!--			<to uri="bean:state.of.video.stream" />-->
+<!--			<to uri="bean:header.mapper"/>-->
+<!--			<to uri="activemq:topic:Parameters" />-->
+<!--		</route>-->
+<!---->
+<!--		<route>-->
+<!--			<from uri="timer://state.of.payload?fixedRate=true&amp;period=1000" />-->
+<!--			<to uri="bean:state.of.payload" />-->
+<!--			<to uri="bean:header.mapper"/>-->
+<!--			<to uri="activemq:topic:Parameters" />-->
+<!--		</route>-->
+<!---->
+<!--		<route>-->
+<!--			<from uri="timer://state.of.payload.deployment?fixedRate=true&amp;period=1000" />-->
+<!--			<to uri="bean:state.of.payload.deployment" />-->
+<!--			<to uri="bean:header.mapper"/>-->
+<!--			<to uri="activemq:topic:Parameters" />-->
+<!--		</route>-->
+<!---->
+<!--		<route>-->
+<!--			<from uri="timer://main.satellite.switch?fixedRate=true&amp;period=1000" />-->
+<!--			<to uri="bean:main.satellite.switch" />-->
+<!--			<to uri="bean:header.mapper"/>-->
+<!--			<to uri="activemq:topic:Parameters" />-->
+<!--		</route>-->
+<!---->
+<!--		<route>-->
+<!--			<from uri="timer://state.of.transmitter?fixedRate=true&amp;period=1000" />-->
+<!--			<to uri="bean:state.of.transmitter" />-->
+<!--			<to uri="bean:header.mapper"/>-->
+<!--			<to uri="activemq:topic:Parameters" />-->
+<!--		</route>-->
+
+	</routeContext>
+</beans>

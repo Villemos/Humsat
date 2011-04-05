@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<context:annotation-config/>
+
+	<bean id="publisher.commands" class="org.hbird.exchange.datapublisher.ObjectPublisher">
+		<constructor-arg index="0" value="classpath:humsat-metadata-commands.xml"/>
+	</bean>
+
+	<bean id="publisher.locations" class="org.hbird.exchange.datapublisher.ObjectPublisher">
+		<constructor-arg index="0" value="classpath:humsat-metadata-locations.xml"/>
+	</bean>
+
+	<bean id="header.mapper" class="org.hbird.exchange.jms.AllFields"/>
+	
+	<routeContext id="metadatapublisherRoutes" xmlns="http://camel.apache.org/schema/spring"> 
+			
+		<!-- Route for periodically publishing command definitions. -->
+		<route>
+			<from uri="timer://command.loader?fixedRate=true&amp;period=10000"/>
+			<split>
+				<method bean="publisher.commands" method="process"/>
+				<to uri="bean:header.mapper"/>				 
+				<to uri="activemq:topic:CommandDefinitions?explicitQosEnabled=true&amp;timeToLive=9000" />
+			</split>
+		</route>
+	
+		<!-- Route for periodically publishing command definitions. -->
+		<route>
+			<from uri="timer://location.loader?fixedRate=true&amp;period=10000"/>
+			<split>
+				<method bean="publisher.locations" method="process"/>
+				<to uri="bean:header.mapper"/>				 
+				<to uri="activemq:topic:LocationDefinitions?explicitQosEnabled=true&amp;timeToLive=9000" />
+			</split>
+		</route>
+			
+	</routeContext>
+
+</beans>

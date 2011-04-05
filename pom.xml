@@ -1,17 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-	<parent>
-		<artifactId>hummingbird</artifactId>
-		<groupId>com.logica.hummingbird</groupId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
+  <parent>
+    <artifactId>hummingbird</artifactId>
+    <groupId>org.hbird</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
 
-	<groupId>com.logica.hummingbird</groupId>
+	<groupId>com.clearstream</groupId>
 	<artifactId>humsat</artifactId>
 	<packaging>war</packaging>
 	<name>System Test</name>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<description>Provides system integration tests</description>
 
 	<dependencies>
@@ -53,33 +53,39 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.logica.hummingbird</groupId>
+			<groupId>org.hbird.business</groupId>
 			<artifactId>validation</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.logica.hummingbird</groupId>
-			<artifactId>parameter-json-publisher</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.hbird.business</groupId>-->
+<!--			<artifactId>parameter-json-publisher</artifactId>-->
+<!--			<version>0.0.1-SNAPSHOT</version>-->
+<!--		</dependency>-->
 		
 		<dependency>
-			<groupId>com.logica.hummingbird</groupId>
+			<groupId>org.hbird.business</groupId>
 			<artifactId>command-chain</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.logica.hummingbird</groupId>
-			<artifactId>gui-cometd-commanding</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.logica.hummingbird</groupId>
+			<groupId>org.hbird.business</groupId>
+			<artifactId>navigation-orekit</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hbird.business</groupId>
 			<artifactId>simple-parameter-simulator</artifactId>
 			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hbird.exchange</groupId>
+			<artifactId>data</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
