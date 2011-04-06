@@ -24,13 +24,13 @@
 		<template id="producer"/>
 	
 		<routeContextRef ref="simulatorRoutes" />
-<!--		<routeContextRef ref="validatorRoutes" />-->
-<!--		<routeContextRef ref="commandreleaserRoutes" />-->
-<!--		<routeContextRef ref="taskexecutorRoutes" />-->
-<!--		<routeContextRef ref="loggingRoutes" />-->
+		<routeContextRef ref="validatorRoutes" />
+		<routeContextRef ref="commandreleaserRoutes" />
+		<routeContextRef ref="taskexecutorRoutes" />
+		<routeContextRef ref="loggingRoutes" />
 		<routeContextRef ref="orbitalpredictionRoutes" />
-<!--		<routeContextRef ref="metadatapublisherRoutes"/>-->
-<!--		<routeContextRef ref="jsonPublishRoutes"/>-->
+		<routeContextRef ref="metadatapublisherRoutes"/>
+		<routeContextRef ref="jsonPublishRoutes"/>
 		
 	</camelContext>
 	

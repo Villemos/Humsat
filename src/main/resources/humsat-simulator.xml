@@ -146,54 +146,54 @@
 			<to uri="activemq:topic:OrbitalPredictions" />
 		</route>
 		
-<!--		<route>-->
-<!--			<from uri="timer://temperature.at.cpu.board?fixedRate=true&amp;period=1000" />-->
-<!--			<to uri="bean:temperature.at.cpu.board" />-->
-<!--			<to uri="bean:header.mapper"/>-->
-<!--			<to uri="activemq:topic:Parameters" />-->
-<!--		</route>-->
-<!---->
-<!--		<route>-->
-<!--			<from uri="timer://voltage.of.battery?fixedRate=true&amp;period=1000" />-->
-<!--			<to uri="bean:voltage.of.battery" />-->
-<!--			<to uri="bean:header.mapper"/>-->
-<!--			<to uri="activemq:topic:Parameters" />-->
-<!--		</route>-->
-<!---->
-<!--		<route>-->
-<!--			<from uri="timer://state.of.video.stream?fixedRate=true&amp;period=1000" />-->
-<!--			<to uri="bean:state.of.video.stream" />-->
-<!--			<to uri="bean:header.mapper"/>-->
-<!--			<to uri="activemq:topic:Parameters" />-->
-<!--		</route>-->
-<!---->
-<!--		<route>-->
-<!--			<from uri="timer://state.of.payload?fixedRate=true&amp;period=1000" />-->
-<!--			<to uri="bean:state.of.payload" />-->
-<!--			<to uri="bean:header.mapper"/>-->
-<!--			<to uri="activemq:topic:Parameters" />-->
-<!--		</route>-->
-<!---->
-<!--		<route>-->
-<!--			<from uri="timer://state.of.payload.deployment?fixedRate=true&amp;period=1000" />-->
-<!--			<to uri="bean:state.of.payload.deployment" />-->
-<!--			<to uri="bean:header.mapper"/>-->
-<!--			<to uri="activemq:topic:Parameters" />-->
-<!--		</route>-->
-<!---->
-<!--		<route>-->
-<!--			<from uri="timer://main.satellite.switch?fixedRate=true&amp;period=1000" />-->
-<!--			<to uri="bean:main.satellite.switch" />-->
-<!--			<to uri="bean:header.mapper"/>-->
-<!--			<to uri="activemq:topic:Parameters" />-->
-<!--		</route>-->
-<!---->
-<!--		<route>-->
-<!--			<from uri="timer://state.of.transmitter?fixedRate=true&amp;period=1000" />-->
-<!--			<to uri="bean:state.of.transmitter" />-->
-<!--			<to uri="bean:header.mapper"/>-->
-<!--			<to uri="activemq:topic:Parameters" />-->
-<!--		</route>-->
+		<route>
+			<from uri="timer://temperature.at.cpu.board?fixedRate=true&amp;period=1000" />
+			<to uri="bean:temperature.at.cpu.board" />
+			<to uri="bean:header.mapper"/>
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="timer://voltage.of.battery?fixedRate=true&amp;period=1000" />
+			<to uri="bean:voltage.of.battery" />
+			<to uri="bean:header.mapper"/>
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="timer://state.of.video.stream?fixedRate=true&amp;period=1000" />
+			<to uri="bean:state.of.video.stream" />
+			<to uri="bean:header.mapper"/>
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="timer://state.of.payload?fixedRate=true&amp;period=1000" />
+			<to uri="bean:state.of.payload" />
+			<to uri="bean:header.mapper"/>
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="timer://state.of.payload.deployment?fixedRate=true&amp;period=1000" />
+			<to uri="bean:state.of.payload.deployment" />
+			<to uri="bean:header.mapper"/>
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="timer://main.satellite.switch?fixedRate=true&amp;period=1000" />
+			<to uri="bean:main.satellite.switch" />
+			<to uri="bean:header.mapper"/>
+			<to uri="activemq:topic:Parameters" />
+		</route>
+
+		<route>
+			<from uri="timer://state.of.transmitter?fixedRate=true&amp;period=1000" />
+			<to uri="bean:state.of.transmitter" />
+			<to uri="bean:header.mapper"/>
+			<to uri="activemq:topic:Parameters" />
+		</route>
 
 	</routeContext>
 </beans>
