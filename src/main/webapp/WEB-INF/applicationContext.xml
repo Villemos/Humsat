@@ -30,7 +30,7 @@
 		<routeContextRef ref="loggingRoutes" />
 		<routeContextRef ref="orbitalpredictionRoutes" />
 		<routeContextRef ref="metadatapublisherRoutes"/>
-		<routeContextRef ref="jsonPublishRoutes"/>
+		<!-- routeContextRef ref="jsonPublishRoutes"/-->
 		
 	</camelContext>
 	

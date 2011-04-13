@@ -12,7 +12,7 @@
 	<artifactId>humsat</artifactId>
 	<packaging>war</packaging>
 	<name>System Test</name>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<description>Provides system integration tests</description>
 
 	<dependencies>
@@ -104,20 +104,13 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cometd</artifactId>
 			<version>${camel.version}</version>
-<!--			<exclusions>-->
-<!--    		    <exclusion>-->
-<!--			       	<groupId>javax.servlet</groupId>-->
-<!--         			<artifactId>servlet-api</artifactId>-->
-<!--        		</exclusion>-->
-<!--      		</exclusions> 			-->
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-xstream</artifactId>
+			<artifactId>camel-jackson</artifactId>
 			<version>${camel.version}</version>
-		</dependency>
-		
+		</dependency>		
 	</dependencies>
   
 </project>

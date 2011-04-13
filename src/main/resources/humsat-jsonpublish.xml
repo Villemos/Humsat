@@ -11,32 +11,50 @@
 
 	<context:annotation-config/>
 
-	<routeContext id="jsonPublishRoutes" xmlns="http://camel.apache.org/schema/spring">
+	<bean id="formatter" class="org.hbird.exchange.jms.Bytearray2StringFormatter"/>
+
+	<camelContext id="jsonPublishRoutes" xmlns="http://camel.apache.org/schema/spring">
+
+		<dataFormats>
+            <!-- here we define a Json data format with the id jack and that it should use the TestPojo as the class type when
+                 doing unmarshal. The unmarshalTypeName is optional, if not provided Camel will use a Map as the type -->
+            <json id="jack" library="Jackson"/>
+        </dataFormats>
 
 		<route>
 			<from uri="activemq:topic:Parameters" />
-			<to uri="cometd://0.0.0.0:8086/parameter/live"/>
+			<marshal ref="jack"/>
+			<to uri="bean:formatter"/> 
+			<to uri="cometd://127.0.0.1:8086/parameter/live"/>
 		</route>
 
 		<route>
 			<from uri="activemq:topic:Logs" />
-			<to uri="cometd://0.0.0.0:8086/logs/live"/>
+			<marshal ref="jack"/>
+			<to uri="bean:formatter"/>
+			<to uri="cometd://127.0.0.1:8086/logs/live"/>
 		</route>
 
 		<route>
 			<from uri="activemq:topic:CommandDefinitions" />
-			<to uri="cometd://0.0.0.0:8086/commanddefinitions/live"/>
+			<marshal ref="jack"/>
+			<to uri="bean:formatter"/>
+			<to uri="cometd://127.0.0.1:8086/commanddefinitions/live"/>
 		</route>
 
 		<route>
 			<from uri="activemq:topic:LocationDefinitions" />
-			<to uri="cometd://0.0.0.0:8086/locationdefinitions/live"/>
+			<marshal ref="jack"/>
+			<to uri="bean:formatter"/>
+			<to uri="cometd://127.0.0.1:8086/locationdefinitions/live"/>
 		</route>
 
 		<route>
 			<from uri="activemq:topic:OrbitalPredictions" />
-			<to uri="cometd://0.0.0.0:8086/orbitalpredictions/live"/>
+			<marshal ref="jack"/>
+			<to uri="bean:formatter"/>
+			<to uri="cometd://127.0.0.1:8086/orbitalpredictions/live"/>
 		</route>
 				
-	</routeContext>
+	</camelContext>
 </beans>
