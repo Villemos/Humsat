@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<context:annotation-config/>
+
+	<camelContext id="jsonPublishRoutes" xmlns="http://camel.apache.org/schema/spring">
+
+		<dataFormats>
+            <!-- here we define a Json data format with the id jack and that it should use the TestPojo as the class type when
+                 doing unmarshal. The unmarshalTypeName is optional, if not provided Camel will use a Map as the type -->
+            <json id="jack" library="Jackson"/>
+        </dataFormats>
+
+		<route>
+			<from uri="activemq:topic:Parameters" />
+			<marshal ref="jack"/>
+			 <convertBodyTo type="java.lang.String"/> 
+			<to uri="cometd://127.0.0.1:8086/parameter/live"/>
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Logs" />
+			<marshal ref="jack"/>
+			 <convertBodyTo type="java.lang.String"/>
+			<to uri="cometd://127.0.0.1:8086/logs/live"/>
+		</route>
+
+		<route>
+			<from uri="activemq:topic:CommandDefinitions" />
+			<marshal ref="jack"/>
+			 <convertBodyTo type="java.lang.String"/>
+			<to uri="cometd://127.0.0.1:8086/commanddefinitions/live"/>
+		</route>
+
+		<route>
+			<from uri="activemq:topic:LocationDefinitions" />
+			<marshal ref="jack"/>
+			 <convertBodyTo type="java.lang.String"/>
+			<to uri="cometd://127.0.0.1:8086/locationdefinitions/live"/>
+		</route>
+
+		<route>
+			<from uri="activemq:topic:OrbitalPredictions" />
+			<marshal ref="jack"/>
+			 <convertBodyTo type="java.lang.String"/>
+			<to uri="cometd://127.0.0.1:8086/orbitalpredictions/live"/>
+		</route>
+				
+	</camelContext>
+</beans>

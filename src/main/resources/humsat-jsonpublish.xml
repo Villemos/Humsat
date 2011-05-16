@@ -11,8 +11,6 @@
 
 	<context:annotation-config/>
 
-	<bean id="formatter" class="org.hbird.exchange.jms.Bytearray2StringFormatter"/>
-
 	<camelContext id="jsonPublishRoutes" xmlns="http://camel.apache.org/schema/spring">
 
 		<dataFormats>
@@ -24,35 +22,35 @@
 		<route>
 			<from uri="activemq:topic:Parameters" />
 			<marshal ref="jack"/>
-			<to uri="bean:formatter"/> 
+			 <convertBodyTo type="java.lang.String"/> 
 			<to uri="cometd://127.0.0.1:8086/parameter/live"/>
 		</route>
 
 		<route>
 			<from uri="activemq:topic:Logs" />
 			<marshal ref="jack"/>
-			<to uri="bean:formatter"/>
+			 <convertBodyTo type="java.lang.String"/>
 			<to uri="cometd://127.0.0.1:8086/logs/live"/>
 		</route>
 
 		<route>
 			<from uri="activemq:topic:CommandDefinitions" />
 			<marshal ref="jack"/>
-			<to uri="bean:formatter"/>
+			 <convertBodyTo type="java.lang.String"/>
 			<to uri="cometd://127.0.0.1:8086/commanddefinitions/live"/>
 		</route>
 
 		<route>
 			<from uri="activemq:topic:LocationDefinitions" />
 			<marshal ref="jack"/>
-			<to uri="bean:formatter"/>
+			 <convertBodyTo type="java.lang.String"/>
 			<to uri="cometd://127.0.0.1:8086/locationdefinitions/live"/>
 		</route>
 
 		<route>
 			<from uri="activemq:topic:OrbitalPredictions" />
 			<marshal ref="jack"/>
-			<to uri="bean:formatter"/>
+			 <convertBodyTo type="java.lang.String"/>
 			<to uri="cometd://127.0.0.1:8086/orbitalpredictions/live"/>
 		</route>
 				

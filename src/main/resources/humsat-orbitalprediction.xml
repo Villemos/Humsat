@@ -20,7 +20,7 @@
 	</bean>
 	
 	<!-- Satellite satellite, OrbitalState state, List<Location> locations -->
-	<bean id="orbit.scheduler.predicted" class="org.hbird.exchange.orbital.OrbitalStateScheduler">
+	<bean id="orbit.scheduler.predicted" class="org.hbird.exchange.navigation.OrbitalStateScheduler">
 		<constructor-arg index="0" value="Predicted"/>
 		<constructor-arg index="1" ref="satellite"/>
 		<constructor-arg index="2"><null/></constructor-arg>

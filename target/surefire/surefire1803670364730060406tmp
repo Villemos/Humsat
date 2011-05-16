@@ -1,0 +1,5 @@
+#surefire
+#Mon May 16 12:23:00 CEST 2011
+user.dir=/home/turbat/sources/Humsat
+localRepository=/home/turbat/.m2/repository
+basedir=/home/turbat/sources/Humsat

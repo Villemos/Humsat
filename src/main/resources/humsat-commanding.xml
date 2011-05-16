@@ -13,10 +13,6 @@
 
 	<bean id="commandreleaser" class="org.hbird.business.command.releaser.CommandReleaser"/>
 
-	<bean id="stateConnector" class="org.hbird.exchange.dataprovider.SimpleDataBuffer"/>
-
-	<bean id="header.mapper" class="org.hbird.exchange.jms.AllFields"/>
-
 	<routeContext id="commandreleaserRoutes" xmlns="http://camel.apache.org/schema/spring"> 
 	
 		<!-- Route to receive and store state parameters. -->

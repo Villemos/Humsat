@@ -14,6 +14,8 @@
 	<import resource="classpath:humsat-metadata-locations.xml" />
 	<import resource="classpath:humsat-metadata-satellite.xml" />
 	
+	<bean id="mapper" class="org.hbird.exchange.utilities.AllFields"/>
+	
 	<!-- String name, String description, String unit, double angularFrequency, double amplitude, double phase, double intercept, long modolus -->
 	<bean id="temperature.at.cpu.board" class="org.hbird.business.simpleparametersimulator.SinusCurveParameter">
 		<constructor-arg index="0" value="CPU Temperature"/>
@@ -90,7 +92,7 @@
 	</bean>
 
 	<!-- String name, String description, long timestamp, long datasetidentifier, D3Vector position, D3Vector velocity -->
-	<bean id="initial.orbitalstate" class="org.hbird.exchange.orbital.OrbitalState">
+	<bean id="initial.orbitalstate" class="org.hbird.exchange.navigation.OrbitalState">
 		<constructor-arg index="0" value="Initial Orbital State"/>
 		<constructor-arg index="1" value="The initial state of Humsat"/>
 		<constructor-arg index="2" value="0"/>
@@ -100,7 +102,7 @@
 	</bean>
 
 	<!-- Satellite satellite, OrbitalState state, List<Location> locations -->
-	<bean id="orbit.scheduler" class="org.hbird.exchange.orbital.OrbitalStateScheduler">
+	<bean id="orbit.scheduler" class="org.hbird.exchange.navigation.OrbitalStateScheduler">
 		<constructor-arg index="0" value="Measured"/>
 		<constructor-arg index="1" ref="satellite"/>
 		<constructor-arg index="2" ref="initial.orbitalstate"/>
@@ -113,15 +115,9 @@
 		</constructor-arg>
 	</bean>
 	
-	<bean id="orbitalstate.release.scheduler" class="org.hbird.exchange.jms.MessageReleaseScheduler">
-		<property name="fields">
-			<list>
-				<value>timestamp</value>
-			</list>
-		</property>
+	<bean id="orbitalstate.release.scheduler" class="org.hbird.exchange.utilities.FieldBasedScheduler">
+		<property name="fieldName" value="timestamp"/>
 	</bean>	
-
-	<bean id="header.mapper" class="org.hbird.exchange.jms.AllFields"/>
 
 	<routeContext id="simulatorRoutes" xmlns="http://camel.apache.org/schema/spring"> 
 
@@ -133,10 +129,15 @@
 		
 		<route>
 			<from uri="direct:OrbitPredictions"/>
-			<multicast>
-				<to uri="bean:orbit.scheduler?method=processOrbitalState"/>
-				<to uri="direct:OrbitalStateScheduler" />
-			</multicast>
+						
+			<filter>
+            	<simple>${body} is 'org.hbird.exchange.navigation.OrbitalState'</simple>
+            			
+				<multicast>
+					<to uri="bean:orbit.scheduler?method=processOrbitalState"/>
+					<to uri="direct:OrbitalStateScheduler" />
+				</multicast>
+			</filter>
 		</route>
 
 		<route>

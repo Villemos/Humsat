@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<context:annotation-config/>
+
+	<import resource="classpath:humsat-metadata-locations.xml" />
+	<import resource="classpath:humsat-metadata-satellite.xml" />
+
+	<!-- The beans required to simulate the satellite orbit.  -->
+	<bean id="orbit.predictor.predicted" class="org.hbird.business.navigation.OrbitPredictor">
+		<constructor-arg index="0" value="src/main/webapp/WEB-INF"/>
+	</bean>
+	
+	<!-- Satellite satellite, OrbitalState state, List<Location> locations -->
+	<bean id="orbit.scheduler.predicted" class="org.hbird.exchange.navigation.OrbitalStateScheduler">
+		<constructor-arg index="0" value="Predicted"/>
+		<constructor-arg index="1" ref="satellite"/>
+		<constructor-arg index="2"><null/></constructor-arg>
+		<constructor-arg index="3">
+			<list>
+				<ref bean="location.darmstadt"/>
+				<ref bean="location.newdelhi"/>
+				<ref bean="location.houston"/>
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	
+	<routeContext id="orbitalpredictionRoutes" xmlns="http://camel.apache.org/schema/spring">
+
+		<route>
+			<from uri="activemq:queue:OrbitalPredictionRequests" />
+			<to uri="bean:orbit.predictor.predicted"/>
+		</route>
+
+		<route>
+			<from uri="timer://prediction?fixedRate=true&amp;period=60000" />
+			<to uri="bean:orbit.scheduler.predicted?method=process"/>
+			<to uri="bean:orbit.predictor.predicted"/>
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:LocationDefinitions"/>
+			<to uri="bean:orbit.scheduler.predicted?method=processLocation"/>
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:OrbitalPredictions"/>
+			<to uri="bean:orbit.scheduler.predicted?method=processOrbitalState"/>
+		</route>
+
+	</routeContext>
+
+</beans>
