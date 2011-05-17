@@ -42,23 +42,22 @@
 		<!-- convert the Strings to bitsets for the packet broker -->
 		<convertBodyTo type="java.util.BitSet" />
 
-<!-- 		<split> -->
-<!-- 			<method bean="packetBroker" method="decodeBinaryTelemetry"></method> -->
-<!-- 			<choice> -->
-<!-- 				<when> -->
-<!-- 					<simple>${header.type} == TMPacket</simple> -->
-<!-- 					<to uri="activemq:topic:processedPacketsOut?jmsMessageType=Text"></to> -->
-<!-- 				</when> -->
-<!-- 				<when> -->
-<!-- 					<simple>${header.type} == TMParameter</simple> -->
-<!-- 					<to uri="activemq:topic:Parameters"></to> -->
-<!-- 				</when> -->
-<!-- 			</choice> -->
-<!-- 		</split> -->
-		<to uri="stream:out" /> 
+		<split>
+			<method bean="packetBroker" method="decodeBinaryTelemetry"></method>
+			<choice>
+				<when>
+					<simple>${header.type} == TMPacket</simple>
+					<to uri="activemq:topic:processedPacketsOut?jmsMessageType=Text"></to>
+				</when>
+				<when>
+					<simple>${header.type} == TMParameter</simple>
+					<to uri="activemq:topic:Parameters"></to>
+				</when>
+			</choice>
+		</split>
+	 
 	</route>
 	
-		
 	</routeContext>	
 
 </beans>
