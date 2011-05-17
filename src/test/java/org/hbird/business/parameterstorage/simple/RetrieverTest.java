@@ -8,7 +8,6 @@ package org.hbird.business.parameterstorage.simple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -23,8 +22,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.test.CamelTestSupport;
-import org.hbird.business.parameterstorage.simple.AddTimestampToBody;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,7 +79,7 @@ public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 			e.printStackTrace();
 		}
 		
-		//Add routes to access the retrieved parameter that are stored in a queue, via the mock component.
+		//Add routes to access the retrieved parameter (that are stored in a queue) via the mock component.
 		try{
 		context.addRoutes(
 			new RouteBuilder() {

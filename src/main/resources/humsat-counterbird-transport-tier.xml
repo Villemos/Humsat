@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd
+       ">
+       
+       
+	<bean id="cubesatXtceModelFactory" class="org.hbird.transport.xtce.XtceModelFactory">
+		<constructor-arg value="src/data/cubesat.xml"></constructor-arg>
+	</bean>
+
+	<bean id="packetBroker" class="org.hbird.transport.packetbroker.HummingbirdCamelPacketBrokerParameterOutput">
+		<constructor-arg ref="cubesatXtceModelFactory"></constructor-arg>
+	</bean>
+	
+	<bean id="frameDecoder" class="org.hbird.transport.protocols.ccsds.transferframe.CcsdsFrameDecoder">
+		<constructor-arg value="256"></constructor-arg>
+		<constructor-arg value="false"></constructor-arg>
+		<constructor-arg value="false"></constructor-arg>
+	</bean>
+
+	<routeContext id="counterbirdTransportTierRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<!-- Camel will search this package and instantiate any routes defined 
+			in there -->
+<!-- 		<package>org.hbird.mcs.cubebird</package> -->
+
+	<!-- Stream the TM string in the file and send it to the console and an activemq queue -->
+
+	<route>
+		<!-- Grab the packets from the message queue -->
+		<from uri="activemq:frames" />
+		<to uri="bean:frameDecoder" />
+
+		<!-- convert the Strings to bitsets for the packet broker -->
+		<convertBodyTo type="java.util.BitSet" />
+
+<!-- 		<split> -->
+<!-- 			<method bean="packetBroker" method="decodeBinaryTelemetry"></method> -->
+<!-- 			<choice> -->
+<!-- 				<when> -->
+<!-- 					<simple>${header.type} == TMPacket</simple> -->
+<!-- 					<to uri="activemq:topic:processedPacketsOut?jmsMessageType=Text"></to> -->
+<!-- 				</when> -->
+<!-- 				<when> -->
+<!-- 					<simple>${header.type} == TMParameter</simple> -->
+<!-- 					<to uri="activemq:topic:Parameters"></to> -->
+<!-- 				</when> -->
+<!-- 			</choice> -->
+<!-- 		</split> -->
+		<to uri="stream:out" /> 
+	</route>
+	
+		
+	</routeContext>	
+
+</beans>

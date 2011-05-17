@@ -1,4 +1,4 @@
-package com.clearstream.humsat;
+package org.hbird.humsat;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package com.clearstream.humsat;
+package org.hbird.humsat;
 
 import org.apache.camel.Exchange;
 import org.apache.log4j.Logger;

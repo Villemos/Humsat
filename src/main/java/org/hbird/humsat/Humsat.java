@@ -1,4 +1,4 @@
-package com.clearstream.humsat;
+package org.hbird.humsat;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.support.FileSystemXmlApplicationContext;

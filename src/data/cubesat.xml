@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SpaceSystem xmlns="http://www.omg.org/space/xtce" 
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xmlns:xtce="http://www.omg.org/space/xtce"
+			 xsi:schemaLocation="http://www.omg.org/space/xtce SpaceSystemV1.0.xsd" name="TrivSat">
+
+	<TelemetryMetaData>
+		<ParameterTypeSet>
+			<IntegerParameterType name="11bitUInteger" sizeInBits="11" signed="false">
+				<UnitSet />
+			</IntegerParameterType>
+
+			<IntegerParameterType name="16bitUInteger" sizeInBits="16" signed="false">
+				<UnitSet />
+			</IntegerParameterType>
+			
+			<IntegerParameterType name="16bitInteger" sizeInBits="16" signed="true">
+				<UnitSet />
+			</IntegerParameterType>
+
+			<IntegerParameterType name="32bitUInteger" sizeInBits="32" signed="false">
+				<UnitSet />
+			</IntegerParameterType>
+
+			<FloatParameterType name="32bitFloat" sizeInBits="32">
+				<UnitSet />
+			</FloatParameterType>
+
+			<FloatParameterType name="64bitFloat" sizeInBits="64" >
+				<UnitSet />
+			</FloatParameterType>
+		</ParameterTypeSet>
+
+
+		<ParameterSet>
+			<Parameter parameterTypeRef="11bitUInteger" name="CUBESAT_APID" />
+			<Parameter parameterTypeRef="16bitUInteger" name="PACKET_LENGTH" />
+			<Parameter parameterTypeRef="32bitUInteger" name="CUBESAT_FLIGHT_HOURS" />
+			<Parameter parameterTypeRef="64bitFloat" name="CUBESAT_NUKE_TEMP" />
+			<Parameter parameterTypeRef="16bitInteger" name="LONGITUDE"/>
+			<Parameter parameterTypeRef="16bitInteger" name="LATITUDE"/>
+		</ParameterSet>
+
+
+		<ContainerSet>
+			<SequenceContainer name="TMPacket" shortDescription="CCSDS TM Packet">
+				<EntryList>
+					<ContainerRefEntry containerRef="TMPacketHeader" />
+				</EntryList>
+			</SequenceContainer>
+
+			<SequenceContainer name="TMPacketHeader" shortDescription="CCSDS TM Packet Header" abstract="true">
+				<EntryList>
+					<ParameterRefEntry parameterRef="CUBESAT_APID" />
+					<ParameterRefEntry parameterRef="PACKET_LENGTH" />
+				</EntryList>
+			</SequenceContainer>
+
+			<SequenceContainer name="FlightHours"
+				shortDescription="contains all telemetred data parameters for cubesat flight hours">
+				<BaseContainer containerRef="TMPacketHeader">
+					<RestrictionCriteria>
+						<ComparisonList>
+							<Comparison parameterRef="CUBESAT_APID" value="333" />
+						</ComparisonList>
+					</RestrictionCriteria>
+				</BaseContainer>
+				
+				<EntryList>
+					<ParameterRefEntry parameterRef="CUBESAT_FLIGHT_HOURS" />
+				</EntryList>
+			</SequenceContainer>
+
+			<SequenceContainer name="LaserTemp"
+				shortDescription="contains all telemetred data parameters for the cubesat's nuclear reactor temperature">
+				<BaseContainer containerRef="TMPacketHeader">
+					<RestrictionCriteria>
+						<ComparisonList>
+							<Comparison parameterRef="CUBESAT_APID" value="555" />
+						</ComparisonList>
+					</RestrictionCriteria>
+				</BaseContainer>
+				
+				<EntryList>
+					<ParameterRefEntry parameterRef="CUBESAT_NUKE_TEMP" />
+				</EntryList>
+			</SequenceContainer>
+
+			<SequenceContainer name="AllSystems"
+				shortDescription="contains all telemetred data parameters for the cubesat's nuclear reactor temperature and flight hours">
+				<BaseContainer containerRef="TMPacketHeader">
+					<RestrictionCriteria>
+						<ComparisonList>
+							<Comparison parameterRef="CUBESAT_APID" value="999" />
+						</ComparisonList>
+					</RestrictionCriteria>
+				</BaseContainer>
+				
+				<EntryList>
+					<ParameterRefEntry parameterRef="CUBESAT_NUKE_TEMP" />
+					<ParameterRefEntry parameterRef="CUBESAT_FLIGHT_HOURS" />
+				</EntryList>
+			</SequenceContainer>
+			
+			<SequenceContainer name="Position"
+				shortDescription="contains all telemetred data parameters for the cubesat's position relative to Earth">
+				<BaseContainer containerRef="TMPacketHeader">
+					<RestrictionCriteria>
+						<ComparisonList>
+							<Comparison parameterRef="CUBESAT_APID" value="003" />
+						</ComparisonList>
+					</RestrictionCriteria>
+				</BaseContainer>
+				
+				<EntryList>
+					<ParameterRefEntry parameterRef="LATITUDE" />
+					<ParameterRefEntry parameterRef="LONGITUDE" />
+				</EntryList>
+			</SequenceContainer>
+
+		</ContainerSet>
+
+	</TelemetryMetaData>
+
+</SpaceSystem>
+
+
