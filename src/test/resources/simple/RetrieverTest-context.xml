@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://camel.apache.org/schema/spring 
+       http://camel.apache.org/schema/spring/camel-spring.xsd
+       ">
+
+	<!-- ### parameterstorage.simple.RETRIEVER Example ### 
+	
+	This example is fully working and can be used to configure Hummingbird 
+	to your needs. 
+	Instead of activemq:queue:RetrievedParameters you probably would want to
+	use a topic to write your retrieved Parameters to, though...
+	-->   
+
+	<context:annotation-config />
+
+	<!-- Set up the retriever bean -->
+	<bean id="retriever" class="org.hbird.business.parameterstorage.simple.Retriever">
+		<constructor-arg index="0" ref="database" />
+		<constructor-arg index="1" value="seda:RetrievedParameters" />
+	</bean>
+
+	<!--Set up the activemq broker bean -->
+	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent"
+		p:brokerURL="tcp://localhost:61616" />
+
+	<!-- Set up the database -->
+	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" p:driverClassName="org.h2.Driver"
+		p:url="jdbc:h2:/tmp/hbird-unittests" p:username="hbird" p:password="" />
+
+	<!-- Create camel context -->
+	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
+		<template id="producer" />
+		
+		<dataFormats>
+			<xstream id="xstream-default" />
+		</dataFormats>
+
+		<onException>
+			<exception>java.io.IOException</exception>
+			<handled><constant>true</constant></handled>
+			<to uri="activemq:queue:RetrieverCommandsFailed" />
+		</onException>
+		
+		<route>
+			<from uri="activemq:queue:RetrieverCommands" />
+			<to uri="bean:retriever" />
+		</route>
+		
+		<route>
+			<from uri="seda:RetrievedParameters" />
+			<unmarshal ref="xstream-default" />
+			<to uri="activemq:queue:RetrievedParameters" />
+		</route>
+
+	
+
+	</camelContext>
+</beans>
+
+
+
