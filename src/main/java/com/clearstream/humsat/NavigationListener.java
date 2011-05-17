@@ -4,8 +4,8 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.log4j.Logger;
-import org.hbird.exchange.orbital.LocationContactEvent;
-import org.hbird.exchange.orbital.OrbitalState;
+import org.hbird.exchange.navigation.LocationContactEvent;
+import org.hbird.exchange.navigation.OrbitalState;
 
 /**
  * @TITLE System Test
