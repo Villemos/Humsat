@@ -14,6 +14,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,10 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 /*
  * Tests Hummingbird's 'CreateSqlStatement' Bean
  */
-@ContextConfiguration(locations = { "/simple/ArchiverTest-context.xml" })
+@ContextConfiguration(locations = { "file:src/main/resources/humsat-parameterstorage-archiver.xml" })
 public class ArchiverTest extends AbstractJUnit4SpringContextTests {
 
-	@Produce(uri = "activemq:queue:Parameters")
+	@Produce(uri = "activemq:topic:Parameters")
 	protected ProducerTemplate producer = null;
 
 	@Autowired
@@ -38,7 +39,7 @@ public class ArchiverTest extends AbstractJUnit4SpringContextTests {
 
 	protected JdbcTemplate template = null;
 
-	protected String parameterName = "ELEVATION";
+	protected String parameterName = "test_parameter";
 	protected String parameterValue = "987654.3210987654";
 	protected String parameterTimestamp = "1301234567891";
 	protected String parameterValueType = "class java.lang.Double";
@@ -75,7 +76,7 @@ public class ArchiverTest extends AbstractJUnit4SpringContextTests {
 		exchange.getIn().setHeader("Value Type", parameterValueType);
 		exchange.getIn().setBody(parameterBody);
 
-		// Send exchange and wait 0.1sec
+		// Send exchange and wait a little...
 		producer.send(exchange);
 
 		// Wait until there is 1 dataset in the database, but max 0.5sec
@@ -95,10 +96,16 @@ public class ArchiverTest extends AbstractJUnit4SpringContextTests {
 	
 		int numberOfDatasets = template.queryForInt(queryForRowCount);
 		assertEquals("Number of rows in table is incorrect,", 1, numberOfDatasets);
-		
-		
+				
 		String body = template.queryForObject(queryForBody, String.class);
 		assertEquals("Body has not been converted correctly,", correctBodyAsXMLString, body);
-		
+	}
+	
+	@After
+	public void teadDown() {
+		template = new JdbcTemplate(database);
+
+		template.execute("DROP TABLE IF EXISTS " + parameterName.toUpperCase() + ";");
+		template.execute("DROP TABLE IF EXISTS " + parameterName.toLowerCase() + ";");
 	}
 }

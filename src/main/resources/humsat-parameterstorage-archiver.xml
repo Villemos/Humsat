@@ -38,7 +38,6 @@
 	</bean>
 
 	<camelContext id="archiverContext" xmlns="http://camel.apache.org/schema/spring">
-<!-- 	<routeContext id="archiverRoutes" xmlns="http://camel.apache.org/schema/spring"> -->
 
 		<route>
 			<from uri="activemq:topic:Parameters" />

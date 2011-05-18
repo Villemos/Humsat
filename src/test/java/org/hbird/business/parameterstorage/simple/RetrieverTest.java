@@ -30,7 +30,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 /*
  * Tests Hummingbird's 'Retriever' Bean
  */
-@ContextConfiguration(locations = { "/simple/RetrieverTest-context.xml" })
+@ContextConfiguration(locations = { "file:src/main/resources/humsat-parameterstorage-retriever.xml" })
 public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 	@Produce(uri = "activemq:RetrieverCommands")
 	protected ProducerTemplate producer = null;
@@ -59,21 +59,16 @@ public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 			template = new JdbcTemplate(database);
 			
 			template.execute("DROP TABLE IF EXISTS test_parameter;");
-			template
-					.execute("CREATE TABLE test_parameter (timestamp BIGINT, value BIGINT, "
-							+ "local_timestamp BIGINT, Body varchar(500), PRIMARY KEY (timestamp));");
-			template
-					.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
-							+ "values ('1300000001000', '1301910090001', '<long>11111</long>');");
-			template
-					.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
-							+ "values ('1300000002000', '1301910090002', '<long>22222</long>');");
-			template
-					.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
-							+ "values ('1300000003000', '1301910090003', '<long>33333</long>');");
-			template
-					.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
-							+ "values ('1300000004000', '1301910090004', '<long>44444</long>');");
+			template.execute("CREATE TABLE test_parameter (timestamp BIGINT, value BIGINT, "
+				+ "local_timestamp BIGINT, Body varchar(500), PRIMARY KEY (timestamp));");
+			template.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
+				+ "values ('1300000001000', '1301910090001', '<long>11111</long>');");
+			template.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
+				+ "values ('1300000002000', '1301910090002', '<long>22222</long>');");
+			template.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
+				+ "values ('1300000003000', '1301910090003', '<long>33333</long>');");
+			template.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
+				+ "values ('1300000004000', '1301910090004', '<long>44444</long>');");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -91,7 +86,7 @@ public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 				public void configure() {
 					from("activemq:RetrieverCommandsFailed").to("mock:Failed");
 					}
-			}
+				}
 			);
 		} catch(Exception e) {}
 	}

@@ -42,7 +42,6 @@
 
 	<!-- Create camel context -->
 	<camelContext id="retrieverContext" xmlns="http://camel.apache.org/schema/spring">
-<!-- 	<routeContext id="retrieverRoutes" xmlns="http://camel.apache.org/schema/spring"> -->
 		<template id="producer" />
 
 		<onException>
