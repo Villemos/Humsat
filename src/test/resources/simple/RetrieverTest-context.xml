@@ -40,7 +40,7 @@
 		p:password="hbird" />
 
 	<!-- Create camel context -->
-	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="retrieverContext" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer" />
 		
 		<dataFormats>

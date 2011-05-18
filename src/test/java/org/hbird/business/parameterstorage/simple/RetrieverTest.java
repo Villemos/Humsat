@@ -8,9 +8,6 @@ package org.hbird.business.parameterstorage.simple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
@@ -26,6 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
@@ -44,10 +42,12 @@ public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 	protected MockEndpoint failed = null;
 
 	@Autowired
-	protected CamelContext context = null;
+	protected CamelContext retrieverContext = null;
 
 	@Autowired
 	protected DataSource database = null;
+	
+	protected JdbcTemplate template = null;
 
 	/*
 	 * Create the database and fill it with 4 datasets. Each Dataset has a
@@ -56,44 +56,43 @@ public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 	@Before
 	public void initialize() {
 		try {
-			Statement statement = database.getConnection().createStatement();
-			statement.execute("DROP TABLE IF EXISTS test_parameter;");
-			statement
+			template = new JdbcTemplate(database);
+			
+			template.execute("DROP TABLE IF EXISTS test_parameter;");
+			template
 					.execute("CREATE TABLE test_parameter (timestamp BIGINT, value BIGINT, "
 							+ "local_timestamp BIGINT, Body varchar(500), PRIMARY KEY (timestamp));");
-			statement
+			template
 					.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
 							+ "values ('1300000001000', '1301910090001', '<long>11111</long>');");
-			statement
+			template
 					.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
 							+ "values ('1300000002000', '1301910090002', '<long>22222</long>');");
-			statement
+			template
 					.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
 							+ "values ('1300000003000', '1301910090003', '<long>33333</long>');");
-			statement
+			template
 					.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
 							+ "values ('1300000004000', '1301910090004', '<long>44444</long>');");
-		} catch (SQLException se) {
-			se.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		//Add routes to access the retrieved parameter (that are stored in a queue) via the mock component.
 		try{
-		context.addRoutes(
-			new RouteBuilder() {
-				public void configure() {
+			retrieverContext.addRoutes(
+				new RouteBuilder() {
+					public void configure() {
 					from("activemq:RetrievedParameters").to("mock:Result");
 				}
 			}
-		);
-		context.addRoutes(new RouteBuilder() {
-			public void configure() {
-				from("activemq:RetrieverCommandsFailed").to("mock:Failed");
-				}
+			);
+			retrieverContext.addRoutes(new RouteBuilder() {
+				public void configure() {
+					from("activemq:RetrieverCommandsFailed").to("mock:Failed");
+					}
 			}
-		);
+			);
 		} catch(Exception e) {}
 	}
 				
@@ -102,8 +101,7 @@ public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@After
 	public void dropDatabase() throws Exception {
-		Statement statement = database.getConnection().createStatement();
-		statement.execute("DROP TABLE test_parameter");
+		template.execute("DROP TABLE test_parameter");
 	}
 
 	/*
@@ -117,7 +115,7 @@ public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 		String sqlQuery = "test_parameter";
 
 		// Prepare exchange (set Body and Headers) and send it.
-		Exchange exchange = new DefaultExchange(context);
+		Exchange exchange = new DefaultExchange(retrieverContext);
 		exchange.getIn().setBody(sqlQuery);
 
 		producer.send(exchange);
@@ -155,7 +153,7 @@ public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 		String sqlQuery = "test_parameter;1300000001500;1300000003500";
 
 		// Prepare exchange (set Body and Headers) and send it.
-		Exchange exchange = new DefaultExchange(context);
+		Exchange exchange = new DefaultExchange(retrieverContext);
 		exchange.getIn().setBody(sqlQuery);
 
 		producer.send(exchange);
@@ -192,7 +190,7 @@ public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 		String sqlQuery = "very;wrong";
 		
 		// Prepare exchange (set Body and Headers) and send it.
-		Exchange exchange = new DefaultExchange(context);
+		Exchange exchange = new DefaultExchange(retrieverContext);
 		exchange.getIn().setBody(sqlQuery);
 
 		producer.send(exchange);
