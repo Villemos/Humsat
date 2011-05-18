@@ -15,7 +15,8 @@
 	<!-- ### parameterstorage.simple.RETRIEVER Example ### 
 	
 	This example is fully working and can be used to configure Hummingbird 
-	to your needs. 
+	to your needs. You have to have a postgresql Database running (see the 
+	'database' bean for details.)
 	Instead of activemq:queue:RetrievedParameters you probably would want to
 	use a topic to write your retrieved Parameters to, though...
 	-->   
@@ -23,10 +24,10 @@
 	<context:annotation-config />
 
 	<!-- Set up the database -->
-	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource"	destroy-method="close" 
-		p:driverClassName="org.h2.Driver"
-		p:url="jdbc:h2:/tmp/hbird-unittests-databasearchiver" 
-		p:username="hbird"
+	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" 
+		p:driverClassName="org.postgresql.Driver"
+		p:url="jdbc:postgresql:hbird" 
+		p:username="hbird" 
 		p:password="hbird" />
 
 	<!-- Set up the retriever bean -->
