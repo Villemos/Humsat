@@ -11,8 +11,12 @@
 
 	<context:annotation-config />
 
-<!--	<import resource="classpath:humsat-jsonpublish.xml" />			-->
-<!-- 	<import resource="classpath:humsat-simulator.xml" />			 -->
+	<!-- ### Transport Tier ### -->
+	<import resource="classpath:humsat-counterbird-transport-tier.xml" />
+	<!-- <import resource="classpath:humsat-simulator.xml" /> -->
+
+	<!-- ### Business Tier ### -->
+	<!-- <import resource="classpath:humsat-jsonpublish.xml" /> -->
 	<import resource="classpath:humsat-validator.xml" />
 	<import resource="classpath:humsat-commanding.xml" />
 	<import resource="classpath:humsat-taskexecutor.xml" />
@@ -20,24 +24,23 @@
 	<import resource="classpath:humsat-orbitalprediction.xml" />
 	<import resource="classpath:humsat-metadata-publisher.xml" />
 
-<!--  	<import resource="classpath:humsat-parameterstorage-archiver.xml" />		  -->
-<!-- 	<import resource="classpath:humsat-parameterstorage-retriever.xml" />		 -->
-	<import resource="classpath:humsat-counterbird-transport-tier.xml" />	
-	
+	<!-- Parameterstorage needs a database. See the respective XML file for details. -->
+	<!-- <import resource="classpath:humsat-parameterstorage-archiver.xml" /> -->
+	<!-- <import resource="classpath:humsat-parameterstorage-retriever.xml"/> -->
+
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
-		<template id="producer"/>
-		
-<!--		<routeContextRef ref="jsonPublishRoutes"/>			-->	
-<!-- 		<routeContextRef ref="simulatorRoutes" />  			 -->
+		<template id="producer" />
+
+		<!-- <routeContextRef ref="simulatorRoutes" /> -->
+
+		<!-- <routeContextRef ref="jsonPublishRoutes"/> -->
 		<routeContextRef ref="validatorRoutes" />
 		<routeContextRef ref="commandreleaserRoutes" />
 		<routeContextRef ref="taskexecutorRoutes" />
 		<routeContextRef ref="loggingRoutes" />
 		<routeContextRef ref="orbitalpredictionRoutes" />
-		<routeContextRef ref="metadatapublisherRoutes"/>
+		<routeContextRef ref="metadatapublisherRoutes" />
 
-		<routeContextRef ref="counterbirdTransportTierRoutes" />
-		
 	</camelContext>
-	
+
 </beans>

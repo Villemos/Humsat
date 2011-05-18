@@ -11,11 +11,12 @@
        http://camel.apache.org/schema/spring 
        http://camel.apache.org/schema/spring/camel-spring.xsd
        ">
-       
-       
-	<bean id="cubesatXtceModelFactory" class="org.hbird.transport.xtce.XtceModelFactory">
+ 
+ 	<bean id="cubesatXtceModelFactory" class="org.hbird.transport.xtce.XtceModelFactory">
 		<constructor-arg value="src/data/cubesat.xml"></constructor-arg>
 	</bean>
+	
+	<bean id="bitsetConverter" class="org.hbird.transport.commons.util.typeconverters.ToBitSetConverter" />
 
 	<bean id="packetBroker" class="org.hbird.transport.packetbroker.HummingbirdCamelPacketBrokerParameterOutput">
 		<constructor-arg ref="cubesatXtceModelFactory"></constructor-arg>
@@ -27,37 +28,35 @@
 		<constructor-arg value="false"></constructor-arg>
 	</bean>
 
-	<routeContext id="counterbirdTransportTierRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<!-- Camel will search this package and instantiate any routes defined 
-			in there -->
-<!-- 		<package>org.hbird.mcs.cubebird</package> -->
+	<camelContext id="counterbirdTransportTiercontext" xmlns="http://camel.apache.org/schema/spring">
 
-	<!-- Stream the TM string in the file and send it to the console and an activemq queue -->
+		<route>
+			<!-- Grab the packets from the message queue -->
+			<from uri="activemq:frames" />
+			
+			<!-- Decode frames... -->
+			<to uri="bean:frameDecoder" />
 
-	<route>
-		<!-- Grab the packets from the message queue -->
-		<from uri="activemq:frames" />
-		<to uri="bean:frameDecoder" />
+			<!-- convert the Strings to bitsets for the packet broker. How to use your own type converter? -->
+<!-- 			<convertBodyTo type="java.util.BitSet" /> --> 
+			<to uri="bean:bitsetConverter" />
 
-		<!-- convert the Strings to bitsets for the packet broker -->
-		<convertBodyTo type="java.util.BitSet" />
+			<split>
+				<method bean="packetBroker" method="decodeBinaryTelemetry"></method>
+				<choice>
+					<when>
+						<simple>${header.type} == TMPacket</simple>
+						<to uri="activemq:topic:processedPacketsOut?jmsMessageType=Text"></to>
+					</when>
+					<when>
+						<simple>${header.type} == TMParameter</simple>
+						<to uri="activemq:topic:Parameters"></to>
+					</when>
+				</choice>
+			</split>
 
-		<split>
-			<method bean="packetBroker" method="decodeBinaryTelemetry"></method>
-			<choice>
-				<when>
-					<simple>${header.type} == TMPacket</simple>
-					<to uri="activemq:topic:processedPacketsOut?jmsMessageType=Text"></to>
-				</when>
-				<when>
-					<simple>${header.type} == TMParameter</simple>
-					<to uri="activemq:topic:Parameters"></to>
-				</when>
-			</choice>
-		</split>
-	 
-	</route>
-	
-	</routeContext>	
+		</route>
+
+	</camelContext>	
 
 </beans>
