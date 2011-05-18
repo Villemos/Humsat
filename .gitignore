@@ -1,8 +1,4 @@
 logs/
-target/classes/
-target/generated-sources/
-target/surefire/
-target/surefire-reports/
-target/test-classes/
-
+target/*
+!target/humsat*.*
 
