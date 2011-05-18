@@ -33,9 +33,11 @@
 		p:brokerURL="tcp://localhost:61616" />
 
 	<!-- Set up the database -->
-	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close" p:driverClassName="org.h2.Driver"
-		p:url="jdbc:h2:/tmp/hbird-unittests" p:username="hbird" p:password="" />
+	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" 
+		p:driverClassName="org.postgresql.Driver"
+		p:url="jdbc:postgresql:hbird" 
+		p:username="hbird" 
+		p:password="hbird" />
 
 	<!-- Create camel context -->
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">

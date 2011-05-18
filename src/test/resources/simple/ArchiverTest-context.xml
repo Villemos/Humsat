@@ -26,10 +26,10 @@ This example is fully working and can be used to configure Hummingbird
 	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent"
 		p:brokerURL="tcp://localhost:61616" />
 
-	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close" p:driverClassName="org.h2.Driver"
-		p:url="jdbc:h2:/tmp/hbird-unittests-databasearchiver" 
-		p:username="hbird"
+	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" 
+		p:driverClassName="org.postgresql.Driver"
+		p:url="jdbc:postgresql:hbird" 
+		p:username="hbird" 
 		p:password="hbird" />
 
 	<bean id="databaseArchiver" class="org.hbird.business.parameterstorage.simple.Archiver">

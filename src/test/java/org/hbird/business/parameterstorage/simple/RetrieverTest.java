@@ -59,7 +59,7 @@ public class RetrieverTest extends AbstractJUnit4SpringContextTests {
 			Statement statement = database.getConnection().createStatement();
 			statement.execute("DROP TABLE IF EXISTS test_parameter;");
 			statement
-					.execute("CREATE TABLE test_parameter (timestamp BIGINT, value DOUBLE, "
+					.execute("CREATE TABLE test_parameter (timestamp BIGINT, value BIGINT, "
 							+ "local_timestamp BIGINT, Body varchar(500), PRIMARY KEY (timestamp));");
 			statement
 					.execute("INSERT INTO test_parameter (timestamp, local_timestamp, body) "
