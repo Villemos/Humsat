@@ -13,7 +13,7 @@
 
 	<!-- ### Transport Tier ### -->
 	<import resource="classpath:humsat-counterbird-transport-tier.xml" />
-<!-- 	<import resource="classpath:humsat-simulator.xml" /> -->
+	<!-- 	<import resource="classpath:humsat-simulator.xml" /> -->
 
 
 	<!-- ### Business Tier ### -->
@@ -32,8 +32,6 @@
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer" />
 
-<!-- 		<routeContextRef ref="simulatorRoutes" /> -->
-
 		<!-- <routeContextRef ref="jsonPublishRoutes"/> -->
 		<routeContextRef ref="validatorRoutes" />
 		<routeContextRef ref="commandreleaserRoutes" />
@@ -42,13 +40,13 @@
 		<routeContextRef ref="orbitalpredictionRoutes" />
 		<routeContextRef ref="metadatapublisherRoutes" />
 		
-		<route>
-			<from uri="activemq:topic:Parameters" />
-			<setBody>
-				<simple>${in.body.name} ${in.body.value}</simple>
-        	</setBody>
-			<to uri="stream:out" />
-		</route>
+<!-- 		<route> -->
+<!-- 			<from uri="activemq:topic:Parameters" /> -->
+<!-- 			<setBody> -->
+<!-- 				<simple>${in.body.name} ${in.body.value}</simple> -->
+<!--         	</setBody> -->
+<!-- 			<to uri="stream:out" /> -->
+<!-- 		</route> -->
 
 	</camelContext>
 
