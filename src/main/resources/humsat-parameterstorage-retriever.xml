@@ -36,10 +36,6 @@
 		<constructor-arg index="1" value="vm:RetrievedParameters" />
 	</bean>
 
-	<!--Set up the activemq broker bean -->
-	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent"
-		p:brokerURL="tcp://localhost:61616" />
-
 	<!-- Create camel context -->
 	<camelContext id="retrieverContext" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer" />

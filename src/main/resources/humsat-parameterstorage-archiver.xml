@@ -23,10 +23,6 @@
 	
 	<context:annotation-config />
 
-	<!--Set up the activemq broker bean -->
-	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent"
-		p:brokerURL="tcp://localhost:61616" />
-
 	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" 
 		p:driverClassName="org.postgresql.Driver"
 		p:url="jdbc:postgresql:hbird" 
