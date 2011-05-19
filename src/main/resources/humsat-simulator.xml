@@ -119,7 +119,7 @@
 		<property name="fieldName" value="timestamp"/>
 	</bean>	
 
-	<routeContext id="simulatorRoutes" xmlns="http://camel.apache.org/schema/spring"> 
+	<camelContext id="simulatorRoutes" xmlns="http://camel.apache.org/schema/spring"> 
 
 		<route>
 			<from uri="timer://orbitalstate?fixedRate=true&amp;period=86400000" />
@@ -196,5 +196,5 @@
 			<to uri="activemq:topic:Parameters" />
 		</route>
 
-	</routeContext>
+	</camelContext>
 </beans>
