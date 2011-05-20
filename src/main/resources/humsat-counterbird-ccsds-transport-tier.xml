@@ -28,7 +28,7 @@
 		<constructor-arg value="false"></constructor-arg>
 	</bean>
 
-	<camelContext id="counterbirdTransportTiercontext" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="counterbirdTransportTierContext" xmlns="http://camel.apache.org/schema/spring">
 
 		<route>
 			<!-- Grab the packets from the message queue -->
