@@ -42,7 +42,6 @@
 		
 		<route>
 			<from uri="activemq:topic:Parameters" />
-			<to uri="activemq:queue:SIMULATORTEST" />
 			<setBody>
 				<simple>${in.body.name} ${in.body.value}</simple>
         	</setBody>
