@@ -56,7 +56,7 @@
 			</split>
 
 		</route>
-
+		
 	</camelContext>	
 
 </beans>

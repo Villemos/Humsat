@@ -12,7 +12,7 @@
 	<context:annotation-config />
 
 	<!-- ### Transport Tier ### -->
-	<import resource="classpath:humsat-counterbird-transport-tier.xml" />
+	<import resource="classpath:humsat-counterbird-ccsds-transport-tier.xml" />
 	<!-- 	<import resource="classpath:humsat-simulator.xml" /> -->
 
 
@@ -40,13 +40,14 @@
 		<routeContextRef ref="orbitalpredictionRoutes" />
 		<routeContextRef ref="metadatapublisherRoutes" />
 		
-<!-- 		<route> -->
-<!-- 			<from uri="activemq:topic:Parameters" /> -->
-<!-- 			<setBody> -->
-<!-- 				<simple>${in.body.name} ${in.body.value}</simple> -->
-<!--         	</setBody> -->
-<!-- 			<to uri="stream:out" /> -->
-<!-- 		</route> -->
+		<route>
+			<from uri="activemq:topic:Parameters" />
+			<to uri="activemq:queue:SIMULATORTEST" />
+			<setBody>
+				<simple>${in.body.name} ${in.body.value}</simple>
+        	</setBody>
+			<to uri="stream:out" />
+		</route>
 
 	</camelContext>
 
