@@ -3,20 +3,21 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-	<!--	APPENDERS-->	
+	<!-- APPENDERS -->
 <!-- 	<appender name="ACTIVEMQ" class="org.apache.log4j.net.JMSAppender"> -->
-		
-<!-- 		<param name="InitialContextFactoryName" value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/> -->
-<!-- 		<param name="ProviderURL" value="tcp://localhost:61616"/> -->
-<!-- 		<param name="TopicBindingName" value="Logs"/> -->
-<!-- 		<param name="TopicConnectionFactoryBindingName" value="ConnectionFactory"/> -->
-		
+
+<!-- 		<param name="InitialContextFactoryName" -->
+<!-- 			value="org.apache.activemq.jndi.ActiveMQInitialContextFactory" /> -->
+<!-- 		<param name="ProviderURL" value="tcp://localhost:61616" /> -->
+<!-- 		<param name="TopicBindingName" value="Logs" /> -->
+<!-- 		<param name="TopicConnectionFactoryBindingName" value="ConnectionFactory" /> -->
+
 <!-- 		<layout class="org.apache.log4j.PatternLayout"> -->
 <!-- 			<param name="ConversionPattern" value="%p - %C{1}.%M(%L) | %m%n" /> -->
 <!-- 		</layout> -->
-				
+
 <!-- 	</appender> -->
-	
+
 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%p - %C{1}.%M(%L) | %m%n" />
@@ -30,30 +31,33 @@
 		<param name="append" value="true" />
 		<param name="encoding" value="UTF-8" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{EEE, d MMM yyyy HH:mm:ss} - %p %C{1}.%M(%L) --- %m%n" />
+			<param name="ConversionPattern"
+				value="%d{EEE, d MMM yyyy HH:mm:ss} - %p %C{1}.%M(%L) --- %m%n" />
 		</layout>
-	</appender>	
-	
-	<!--	LOGGERS-->
+	</appender>
+
+	<!-- LOGGERS -->
 	<logger name="org.apache">
 		<level value="INFO" />
+		<appender-ref ref="CONSOLE" /> 
 	</logger>
-
+	
 	<logger name="org.springframework">
 		<level value="INFO" />
+		<appender-ref ref="CONSOLE" /> 
 	</logger>
 	
 <!-- 	<logger name="org.hbird"> -->
-<!-- 		<level value="INFO"/> -->
-<!-- 		<appender-ref ref="ACTIVEMQ" /> -->
+<!-- 		<level value="TRACE"/> -->
+<!-- 		<appender-ref ref="CONSOLE" /> -->
 <!-- 	</logger> -->
-	
 	
 	<!--	ROOT LOGGER-->
 	<root>
 		<level value="INFO" />
-		<appender-ref ref="CONSOLE" />		
+		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="LOGFILE" />
+<!-- 		<appender-ref ref="ACTIVEMQ" /> -->
 	</root>
 
 </log4j:configuration>
