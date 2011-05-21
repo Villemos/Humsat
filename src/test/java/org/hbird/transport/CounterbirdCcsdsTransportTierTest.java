@@ -6,13 +6,8 @@
 package org.hbird.transport;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.hbird.business.simulator.SimulatorSSM;
-import org.hbird.business.simulator.waveforms.FlatWaveform;
-import org.hbird.business.simulator.waveforms.Waveform;
-import org.hbird.exchange.type.Parameter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -21,6 +16,10 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.log4j.Logger;
+import org.hbird.business.simulator.SimulatorSSM;
+import org.hbird.business.simulator.waveforms.FlatWaveform;
+import org.hbird.business.simulator.waveforms.Waveform;
+import org.hbird.exchange.type.Parameter;
 import org.hbird.transport.protocols.ccsds.transferframe.encoder.CcsdsFrameEncoder;
 import org.hbird.transport.xtce.XtceModelFactory;
 import org.junit.After;
