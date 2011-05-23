@@ -85,7 +85,7 @@ public class CounterbirdCcsdsTransportTierTest extends AbstractJUnit4SpringConte
 	public void testTransportTier() throws InterruptedException {
 		System.out.println("\n\n######TEST-METHOD");
 		
-		generateTestValue("CUBESAT_FLIGHT_HOURS", 20);
+		generateCubesatFlightHoursTelemetryPacket(20);
 		
 		Thread.sleep(2000);
 		
@@ -112,9 +112,11 @@ public class CounterbirdCcsdsTransportTierTest extends AbstractJUnit4SpringConte
 	 * @param name	Name of the TM value. Has to be specified in the SSM.
 	 * @param d		Value to be generated.
 	 */
-	private void generateTestValue(String name, double d) {
+	private void generateCubesatFlightHoursTelemetryPacket(double d) {
 		Map<String,Waveform> test = new HashMap<String,Waveform>();
-		test.put(name, new FlatWaveform(d));
+		test.put("CUBESAT_FLIGHT_HOURS", new FlatWaveform(d));
+		test.put("CUBESAT_APID", new FlatWaveform(333));
+		test.put("PACKET_LENGTH", new FlatWaveform(32));
 		
  		simulator.setWaveformMap(test);
  		simulator.generateMessage();
