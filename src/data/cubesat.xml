@@ -6,6 +6,10 @@
 
 	<TelemetryMetaData>
 		<ParameterTypeSet>
+			<IntegerParameterType name="1bitBoolean" sizeInBits="1" signed="false">
+				<UnitSet />
+			</IntegerParameterType>
+
 			<IntegerParameterType name="11bitUInteger" sizeInBits="11" signed="false">
 				<UnitSet />
 			</IntegerParameterType>
@@ -35,10 +39,21 @@
 		<ParameterSet>
 			<Parameter parameterTypeRef="11bitUInteger" name="CUBESAT_APID" />
 			<Parameter parameterTypeRef="16bitUInteger" name="PACKET_LENGTH" />
-			<Parameter parameterTypeRef="32bitUInteger" name="CUBESAT_FLIGHT_HOURS" />
-			<Parameter parameterTypeRef="64bitFloat" name="CUBESAT_NUKE_TEMP" />
+
+			<Parameter parameterTypeRef="64bitFloat" name="ELEVATION" />
 			<Parameter parameterTypeRef="16bitInteger" name="LONGITUDE"/>
 			<Parameter parameterTypeRef="16bitInteger" name="LATITUDE"/>
+
+			<Parameter parameterTypeRef="32bitUInteger" name="CURRENT_ONBOARD_TIME" />
+			<Parameter parameterTypeRef="32bitUInteger" name="SATELLITE_DEPLOYMENT_TIME" />
+			<Parameter parameterTypeRef="1bitBoolean" name="SATELLITE_MAIN_SWITCH" />
+			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_TRANSMITTER" />
+			<Parameter parameterTypeRef="64bitFloat" name="TEMPERATURE_CPU_BOARD" />
+			<Parameter parameterTypeRef="64bitFloat" name="VOLTAGE_OF_BATTERY" />
+
+			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_VIDEO_STREAM" />
+			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_PAYLOAD" />
+			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_PAYLOAD_DEPLOYMENT" />
 		</ParameterSet>
 
 
@@ -56,8 +71,45 @@
 				</EntryList>
 			</SequenceContainer>
 
-			<SequenceContainer name="FlightHours"
-				shortDescription="contains all telemetred data parameters for cubesat flight hours">
+			<SequenceContainer name="Position"
+				shortDescription="contains all data related to the cubesat's position">
+				<BaseContainer containerRef="TMPacketHeader">
+					<RestrictionCriteria>
+						<ComparisonList>
+							<Comparison parameterRef="CUBESAT_APID" value="111" />
+						</ComparisonList>
+					</RestrictionCriteria>
+				</BaseContainer>
+				
+				<EntryList>
+					<ParameterRefEntry parameterRef="ELEVATION" />
+					<ParameterRefEntry parameterRef="LONGITUDE" />
+					<ParameterRefEntry parameterRef="LATITUDE" />
+				</EntryList>
+			</SequenceContainer>
+
+			<SequenceContainer name="Telemetry"
+				shortDescription="contains all telemetered data parameters">
+				<BaseContainer containerRef="TMPacketHeader">
+					<RestrictionCriteria>
+						<ComparisonList>
+							<Comparison parameterRef="CUBESAT_APID" value="222" />
+						</ComparisonList>
+					</RestrictionCriteria>
+				</BaseContainer>
+				
+				<EntryList>
+					<ParameterRefEntry parameterRef="CURRENT_ONBOARD_TIME" />
+					<ParameterRefEntry parameterRef="SATELLITE_DEPLOYMENT_TIME" />
+					<ParameterRefEntry parameterRef="SATELLITE_MAIN_SWITCH" />
+					<ParameterRefEntry parameterRef="STATE_OF_TRANSMITTER" />
+					<ParameterRefEntry parameterRef="TEMPERATURE_CPU_BOARD" />
+					<ParameterRefEntry parameterRef="VOLTAGE_OF_BATTERY" />
+				</EntryList>
+			</SequenceContainer>
+
+			<SequenceContainer name="Payload"
+				shortDescription="contains all data parameters related to the cubesat's payload.">
 				<BaseContainer containerRef="TMPacketHeader">
 					<RestrictionCriteria>
 						<ComparisonList>
@@ -67,27 +119,14 @@
 				</BaseContainer>
 				
 				<EntryList>
-					<ParameterRefEntry parameterRef="CUBESAT_FLIGHT_HOURS" />
+					<ParameterRefEntry parameterRef="STATE_OF_VIDEO_STREAM" />
+					<ParameterRefEntry parameterRef="STATE_OF_PAYLOAD" />
+					<ParameterRefEntry parameterRef="STATE_OF_PAYLOAD_DEPLOYMENT" />
 				</EntryList>
 			</SequenceContainer>
-
-			<SequenceContainer name="LaserTemp"
-				shortDescription="contains all telemetred data parameters for the cubesat's nuclear reactor temperature">
-				<BaseContainer containerRef="TMPacketHeader">
-					<RestrictionCriteria>
-						<ComparisonList>
-							<Comparison parameterRef="CUBESAT_APID" value="555" />
-						</ComparisonList>
-					</RestrictionCriteria>
-				</BaseContainer>
-				
-				<EntryList>
-					<ParameterRefEntry parameterRef="CUBESAT_NUKE_TEMP" />
-				</EntryList>
-			</SequenceContainer>
-
-			<SequenceContainer name="AllSystems"
-				shortDescription="contains all telemetred data parameters for the cubesat's nuclear reactor temperature and flight hours">
+			
+			<SequenceContainer name="AllData"
+				shortDescription="contains all information available on the cubesat.">
 				<BaseContainer containerRef="TMPacketHeader">
 					<RestrictionCriteria>
 						<ComparisonList>
@@ -97,24 +136,9 @@
 				</BaseContainer>
 				
 				<EntryList>
-					<ParameterRefEntry parameterRef="CUBESAT_NUKE_TEMP" />
-					<ParameterRefEntry parameterRef="CUBESAT_FLIGHT_HOURS" />
-				</EntryList>
-			</SequenceContainer>
-			
-			<SequenceContainer name="Position"
-				shortDescription="contains all telemetred data parameters for the cubesat's position relative to Earth">
-				<BaseContainer containerRef="TMPacketHeader">
-					<RestrictionCriteria>
-						<ComparisonList>
-							<Comparison parameterRef="CUBESAT_APID" value="003" />
-						</ComparisonList>
-					</RestrictionCriteria>
-				</BaseContainer>
-				
-				<EntryList>
-					<ParameterRefEntry parameterRef="LATITUDE" />
-					<ParameterRefEntry parameterRef="LONGITUDE" />
+			        	<ContainerRefEntry containerRef="Position" />
+          				<ContainerRefEntry containerRef="Telemetry" />
+					<ContainerRefEntry containerRef="Payload" />
 				</EntryList>
 			</SequenceContainer>
 

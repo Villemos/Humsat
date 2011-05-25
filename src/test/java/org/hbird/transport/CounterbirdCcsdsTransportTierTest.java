@@ -83,11 +83,11 @@ public class CounterbirdCcsdsTransportTierTest extends AbstractJUnit4SpringConte
 	
 	@Test
 	public void testTransportTier() throws InterruptedException {
-		System.out.println("\n\n######TEST-METHOD");
-		
 		generateCubesatFlightHoursTelemetryPacket(20);
 		
-		Thread.sleep(2000);
+		for (int i = 4; results.getReceivedCounter() < 5  && i < 8192; i *= 2) {
+			Thread.sleep(i);
+		}
 		
 		System.out.println("\n\n--------------------------------------------------------------");
 		for(Exchange e : results.getReceivedExchanges()) {
@@ -113,10 +113,13 @@ public class CounterbirdCcsdsTransportTierTest extends AbstractJUnit4SpringConte
 	 * @param d		Value to be generated.
 	 */
 	private void generateCubesatFlightHoursTelemetryPacket(double d) {
+		System.out.println("Generated");
 		Map<String,Waveform> test = new HashMap<String,Waveform>();
-		test.put("CUBESAT_FLIGHT_HOURS", new FlatWaveform(d));
-		test.put("CUBESAT_APID", new FlatWaveform(333));
-		test.put("PACKET_LENGTH", new FlatWaveform(32));
+		test.put("CUBESAT_APID", new FlatWaveform(111));
+		test.put("PACKET_LENGTH", new FlatWaveform(96));
+		test.put("ELEVATION", new FlatWaveform(d));
+		test.put("LONGITUDE", new FlatWaveform(d*2));
+		test.put("LATITUDE", new FlatWaveform(d*3));
 		
  		simulator.setWaveformMap(test);
  		simulator.generateMessage();

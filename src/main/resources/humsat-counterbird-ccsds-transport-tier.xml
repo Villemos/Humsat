@@ -31,14 +31,14 @@
 	<camelContext id="counterbirdTransportTierContext" xmlns="http://camel.apache.org/schema/spring">
 
 		<route>
-			<!-- Grab the packets from the message queue -->
+<!-- 			Grab the packets from the message queue -->
 			<from uri="activemq:frames" />
 			
-			<!-- Decode frames... -->
+<!-- 			Decode frames... -->
 			<to uri="bean:frameDecoder" />
-
-			<!-- convert the Strings to bitsets for the packet broker. How to use your own type converter? -->
-<!-- 			<convertBodyTo type="java.util.BitSet" /> --> 
+			
+<!-- 			convert the Strings to bitsets for the packet broker. How to use your own type converter? -->
+<!-- 			<convertBodyTo type="java.util.BitSet" />  -->
 			<to uri="bean:bitsetConverter" />
 
 			<split>
