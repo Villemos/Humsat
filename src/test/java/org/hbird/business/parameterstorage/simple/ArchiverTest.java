@@ -5,7 +5,8 @@
 
 package org.hbird.business.parameterstorage.simple;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import javax.sql.DataSource;
 
@@ -58,16 +59,24 @@ public class ArchiverTest extends AbstractJUnit4SpringContextTests {
 	@Before
 	public void initialize() {
 		template = new JdbcTemplate(database);
-
-		template.execute("DROP TABLE IF EXISTS " + parameterName.toUpperCase() + ";");
-		template.execute("DROP TABLE IF EXISTS " + parameterName.toLowerCase() + ";");
 	}
 
 	/*
-	 * Tests the 'DatabaseArchiver' inside a camel route.
+	 * Tests the 'DatabaseArchiver'.
 	 */
 	@Test
 	public void testStore() {
+		//Check Database Connection
+		try {
+			database.getConnection();
+		} catch (Exception e) {
+			fail("e.getMessage())");
+ 		}
+			
+		// Prepare database
+		template.execute("DROP TABLE IF EXISTS " + parameterName.toUpperCase() + ";");
+		template.execute("DROP TABLE IF EXISTS " + parameterName.toLowerCase() + ";");
+		
 		// Prepare exchange. All necessary headers and the body are set.
 		Exchange exchange = new DefaultExchange(archiverContext);
 		exchange.getIn().setHeader("Name", parameterName);
@@ -79,8 +88,8 @@ public class ArchiverTest extends AbstractJUnit4SpringContextTests {
 		// Send exchange and wait a little...
 		producer.send(exchange);
 
-		// Wait until there is 1 dataset in the database, but max 0.5sec
-		for (int i = 4; template.queryForInt(queryForTableCount) != 1 && i < 512; i *= 2) {
+		// Wait until there is 1 dataset in the database, but max 2sec
+		for (int i = 4; template.queryForInt(queryForTableCount) != 1 && i < 2048; i *= 2) {
 			try {Thread.sleep(i);}
 			catch (Exception e) {}
 		}
@@ -88,8 +97,8 @@ public class ArchiverTest extends AbstractJUnit4SpringContextTests {
 		int numberOfTables = template.queryForInt(queryForTableCount);
 		assertEquals("Number of tables in Database is not correct,", 1, numberOfTables);
 		
-		// Wait until there is 1 dataset in the database, but max 0.5sec
-		for (int i = 4; template.queryForInt(queryForRowCount) != 1 && i < 512; i *= 2) {
+		// Wait until there is 1 dataset in the database, but max 2sec
+		for (int i = 4; template.queryForInt(queryForRowCount) != 1 && i < 2048; i *= 2) {
 			try {Thread.sleep(i);}
 			catch (Exception e) {}
 		}
@@ -102,9 +111,7 @@ public class ArchiverTest extends AbstractJUnit4SpringContextTests {
 	}
 	
 	@After
-	public void teadDown() {
-		template = new JdbcTemplate(database);
-
+	public void tearDown() {
 		template.execute("DROP TABLE IF EXISTS " + parameterName.toUpperCase() + ";");
 		template.execute("DROP TABLE IF EXISTS " + parameterName.toLowerCase() + ";");
 	}
