@@ -19,11 +19,11 @@
 	<!-- ### Business Tier ### -->
 	<!-- <import resource="classpath:humsat-jsonpublish.xml" /> -->
 	<import resource="classpath:humsat-validator.xml" />
-	<import resource="classpath:humsat-commanding.xml" />
-	<import resource="classpath:humsat-taskexecutor.xml" />
-	<import resource="classpath:humsat-logging.xml" />
-	<import resource="classpath:humsat-orbitalprediction.xml" />
-	<import resource="classpath:humsat-metadata-publisher.xml" />
+<!-- 	<import resource="classpath:humsat-commanding.xml" /> -->
+<!-- 	<import resource="classpath:humsat-taskexecutor.xml" /> -->
+<!-- 	<import resource="classpath:humsat-logging.xml" /> -->
+<!-- 	<import resource="classpath:humsat-orbitalprediction.xml" /> -->
+<!-- 	<import resource="classpath:humsat-metadata-publisher.xml" /> -->
 
 	<!-- Parameterstorage needs a database. See the respective XML file for details. -->
 	<!-- <import resource="classpath:humsat-parameterstorage-archiver.xml" /> -->
@@ -32,22 +32,23 @@
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer" />
 
-		<!-- <routeContextRef ref="jsonPublishRoutes"/> -->
-		<routeContextRef ref="validatorRoutes" />
-		<routeContextRef ref="commandreleaserRoutes" />
-		<routeContextRef ref="taskexecutorRoutes" />
-		<routeContextRef ref="loggingRoutes" />
-		<routeContextRef ref="orbitalpredictionRoutes" />
-		<routeContextRef ref="metadatapublisherRoutes" />
-		
-		<route>
-			<from uri="activemq:topic:Parameters" />
-			<setBody>
-				<simple>${in.body.name} ${in.body.value}</simple>
-        	</setBody>
-			<to uri="stream:out" />
-		</route>
+<!-- 		<route> -->
+<!-- 			<from uri="activemq:topic:Parameters" /> -->
+<!-- 			<to uri="activemq:queue:Parameters" /> -->
+			
+<!-- 			<setBody> -->
+<!-- 				<simple>${in.body.name}: ${in.body.value}</simple> -->
+<!--         	</setBody> -->
+<!-- 			<to uri="stream:out" /> -->
+<!-- 		</route> -->
 
+		<!-- <routeContextRef ref="jsonPublishRoutes"/> -->
+		<!-- <routeContextRef ref="commandreleaserRoutes" /> -->
+		<!-- <routeContextRef ref="taskexecutorRoutes" /> -->
+		<!-- <routeContextRef ref="loggingRoutes" /> -->
+		<!-- <routeContextRef ref="orbitalpredictionRoutes" /> -->
+		<!-- <routeContextRef ref="metadatapublisherRoutes" /> -->
+		
 	</camelContext>
 
 </beans>

@@ -44,12 +44,12 @@
 			<Parameter parameterTypeRef="16bitInteger" name="LONGITUDE"/>
 			<Parameter parameterTypeRef="16bitInteger" name="LATITUDE"/>
 
-			<Parameter parameterTypeRef="32bitUInteger" name="CURRENT_ONBOARD_TIME" />
-			<Parameter parameterTypeRef="32bitUInteger" name="SATELLITE_DEPLOYMENT_TIME" />
-			<Parameter parameterTypeRef="1bitBoolean" name="SATELLITE_MAIN_SWITCH" />
+			<Parameter parameterTypeRef="32bitUInteger" name="ONBOARD_TIME" />
+			<Parameter parameterTypeRef="32bitUInteger" name="DEPLOYMENT_TIME" />
+			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_MAIN_SWITCH" />
 			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_TRANSMITTER" />
-			<Parameter parameterTypeRef="64bitFloat" name="TEMPERATURE_CPU_BOARD" />
-			<Parameter parameterTypeRef="64bitFloat" name="VOLTAGE_OF_BATTERY" />
+			<Parameter parameterTypeRef="64bitFloat" name="CPU_TEMPERATURE" />
+			<Parameter parameterTypeRef="64bitFloat" name="BATTERY_VOLTAGE" />
 
 			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_VIDEO_STREAM" />
 			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_PAYLOAD" />
@@ -99,12 +99,12 @@
 				</BaseContainer>
 				
 				<EntryList>
-					<ParameterRefEntry parameterRef="CURRENT_ONBOARD_TIME" />
-					<ParameterRefEntry parameterRef="SATELLITE_DEPLOYMENT_TIME" />
-					<ParameterRefEntry parameterRef="SATELLITE_MAIN_SWITCH" />
+					<ParameterRefEntry parameterRef="ONBOARD_TIME" />
+					<ParameterRefEntry parameterRef="DEPLOYMENT_TIME" />
+					<ParameterRefEntry parameterRef="STATE_OF_MAIN_SWITCH" />
 					<ParameterRefEntry parameterRef="STATE_OF_TRANSMITTER" />
-					<ParameterRefEntry parameterRef="TEMPERATURE_CPU_BOARD" />
-					<ParameterRefEntry parameterRef="VOLTAGE_OF_BATTERY" />
+					<ParameterRefEntry parameterRef="CPU_TEMPERATURE" />
+					<ParameterRefEntry parameterRef="BATTERY_VOLTAGE" />
 				</EntryList>
 			</SequenceContainer>
 
