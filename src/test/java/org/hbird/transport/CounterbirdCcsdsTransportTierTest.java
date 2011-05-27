@@ -88,9 +88,9 @@ public class CounterbirdCcsdsTransportTierTest extends AbstractJUnit4SpringConte
 	
 	@Test
 	public void testTransportTier() throws InterruptedException {
-		generateCubesatFlightHoursTelemetryPacket(20);
+		generateCubesatPositionTelemetryPacket(20);
 		
-		for (int i = 4; results.getReceivedCounter() < 5  && i < 8192; i *= 2) {
+		for (int i = 4; results.getReceivedCounter() < 3  && i < 8192; i *= 2) {
 			Thread.sleep(i);
 		}
 		
@@ -114,17 +114,15 @@ public class CounterbirdCcsdsTransportTierTest extends AbstractJUnit4SpringConte
 	 * will be send to 'seda:simMessages' (specified in the SimulatorSSM)
 	 * and then processed by the route defined in the initialize().
 	 * 
-	 * @param name	Name of the TM value. Has to be specified in the SSM.
-	 * @param d		Value to be generated.
+	 * @param value		Value to be generated.
 	 */
-	private void generateCubesatFlightHoursTelemetryPacket(double d) {
-		System.out.println("Generated");
+	private void generateCubesatPositionTelemetryPacket(double d) {
 		Map<String,Waveform> test = new HashMap<String,Waveform>();
 		test.put("CUBESAT_APID", new FlatWaveform(111));
 		test.put("PACKET_LENGTH", new FlatWaveform(96));
 		test.put("ELEVATION", new FlatWaveform(d));
-		test.put("LONGITUDE", new FlatWaveform(d*2));
-		test.put("LATITUDE", new FlatWaveform(d*3));
+		test.put("LONGITUDE", new FlatWaveform(0));
+		test.put("LATITUDE", new FlatWaveform(0));
 		
  		simulator.setWaveformMap(test);
  		simulator.generateMessage();
