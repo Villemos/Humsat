@@ -5,19 +5,19 @@
 
 package org.hbird.business.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.hbird.business.validation.parameter.UpperLimit;
 import org.hbird.exchange.type.Parameter;
 import org.hbird.exchange.type.StateParameter;
 import org.junit.After;
@@ -116,7 +116,9 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testValidCpuTemperatureParameter() throws Exception {
-		Parameter testParameter = createCpuTemperatureParameter(10);
+		Parameter testParameter = new Parameter("CPU_TEMPERATURE", "Temperature of CPU board...",
+				System.currentTimeMillis(), 10, "Degree celsius");
+		
 		producer.sendBodyAndHeader(testParameter, "name", "CPU_TEMPERATURE");
 
 		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
@@ -142,7 +144,9 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testWarningCpuTemperatureParameter() throws Exception {
-		Parameter testParameter = createCpuTemperatureParameter(30);
+		Parameter testParameter = new Parameter("CPU_TEMPERATURE", "Temperature of CPU board...",
+				System.currentTimeMillis(), 30, "Degree celsius");
+		
 		producer.sendBodyAndHeader(testParameter, "name", "CPU_TEMPERATURE");
 
 		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
@@ -167,7 +171,9 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testErrorCpuTemperatureParameter() throws Exception {
-		Parameter testParameter = createCpuTemperatureParameter(70);
+		Parameter testParameter = new Parameter("CPU_TEMPERATURE", "Temperature of CPU board...",
+				System.currentTimeMillis(), 70, "Degree celsius");
+		
 		producer.sendBodyAndHeader(testParameter, "name", "CPU_TEMPERATURE");
 
 		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
@@ -186,15 +192,6 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	}
 	
 	
-	
-	//VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-	//VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-	//VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-	//VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-	//VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-	//VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-	//VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-	//VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 	/*
 	 * LowerLimit Test
 	 * Tests BATTERY_VOLTAGE parameter with a value of '12'.
@@ -202,7 +199,9 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testValidBatteryVoltageParameter() throws Exception {
-		Parameter testParameter = createCpuTemperatureParameter(12);
+		Parameter testParameter = new Parameter("BATTERY_VOLTAGE", "Voltage of battery...",
+				System.currentTimeMillis(), 12, "Volts");
+		
 		producer.sendBodyAndHeader(testParameter, "name", "BATTERY_VOLTAGE");
 
 		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
@@ -228,7 +227,9 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testWarningBatteryVoltageParameter() throws Exception {
-		Parameter testParameter = createCpuTemperatureParameter(8);
+		Parameter testParameter = new Parameter("BATTERY_VOLTAGE", "Voltage of battery...",
+				System.currentTimeMillis(), 8, "Volts");
+		
 		producer.sendBodyAndHeader(testParameter, "name", "BATTERY_VOLTAGE");
 
 		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
@@ -253,7 +254,9 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testErrorBatteryVoltageParameter() throws Exception {
-		Parameter testParameter = createCpuTemperatureParameter(4);
+		Parameter testParameter = new Parameter("BATTERY_VOLTAGE", "Voltage of battery...",
+				System.currentTimeMillis(), 4, "Volts"); 
+			
 		producer.sendBodyAndHeader(testParameter, "name", "BATTERY_VOLTAGE");
 
 		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
@@ -271,8 +274,6 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 		System.out.println("LowerLimit Validation (1 warning, 1 error) finished successfully.");
 	}
 	
-	//**********************************************
-
 	/**
 	 * Method to wait until the specified number of message has been received in
 	 * all 4 Mock-endpoints or until ~4 seconds have passed.
@@ -293,11 +294,6 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 			Thread.sleep(i);
 
 		}
-	}
-
-	private Parameter createCpuTemperatureParameter(double temperature) {
-		return new Parameter("CPU_TEMPERATURE", "Temperature of CPU board...",
-				System.currentTimeMillis(), temperature, "Degree celsius");
 	}
 
 	@After
