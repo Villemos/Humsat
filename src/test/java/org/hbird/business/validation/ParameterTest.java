@@ -6,8 +6,6 @@
 package org.hbird.business.validation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -29,7 +27,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * Integration test for 'Validator' Component.
- *
+ * //FIXME Get test to use JUnit's parameterized feature. Tried it, but it doesn't seem to load the application context. 
  */
 @ContextConfiguration(locations = { "file:src/main/resources/humsat-validator.xml" })
 public class ParameterTest extends AbstractJUnit4SpringContextTests {
@@ -94,8 +92,9 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 		// don't disturb the testing.
 		int oldCount = -1;
 		int newCount = 0;
+		
 		while (oldCount < newCount) {
-			Thread.sleep(1200);
+			Thread.sleep(250);
 			oldCount = newCount;
 			newCount = resultsSwitch.getReceivedCounter() + resultsWarning.getReceivedCounter()
 					+ resultsError.getReceivedCounter()	+ resultsParameters.getReceivedCounter();
@@ -106,7 +105,6 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 		resultsWarning.reset();
 		resultsError.reset();
 		resultsParameters.reset();
-
 	}
 
 	/*
@@ -116,23 +114,12 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testValidCpuTemperatureParameter() throws Exception {
-		Parameter testParameter = new Parameter("CPU_TEMPERATURE", "Temperature of CPU board...",
-				System.currentTimeMillis(), 10, "Degree celsius");
-		
-		producer.sendBodyAndHeader(testParameter, "name", "CPU_TEMPERATURE");
+		int[] expectedMessages = {0, 1 , 1, 1}; 
+		boolean[] expectedStates = {true, true};
+		String name = "CPU_TEMPERATURE";
+		int value = 10;
 
-		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
-
-		assertEquals("Wrong number of 'switch' state-parameters received.", 0, resultsSwitch.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsWarning.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsError.getReceivedCounter());
-		assertEquals("Wrong number of 'parameter' received.", 1, resultsParameters.getReceivedCounter());
-		
-		assertTrue("CPU_Temperature of '10' should result in NO 'warning'.", resultsWarning.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
-
-		assertTrue("CPU_Temperature of '10' should result in NO 'error'.", resultsError.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
+		runTest(expectedMessages, expectedStates, name, value);
 
 		System.out.println("UpperLimit Validation (no warning, no error) finished successfully.");
 	}
@@ -144,22 +131,12 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testWarningCpuTemperatureParameter() throws Exception {
-		Parameter testParameter = new Parameter("CPU_TEMPERATURE", "Temperature of CPU board...",
-				System.currentTimeMillis(), 30, "Degree celsius");
-		
-		producer.sendBodyAndHeader(testParameter, "name", "CPU_TEMPERATURE");
+		int[] expectedMessages = {0, 1 , 1, 1};  //State, Warning, Error, Parameter
+		boolean[] expectedStates = {false, true}; //Warning, Error
+		String name = "CPU_TEMPERATURE";
+		int value = 30;
 
-		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
-
-		assertEquals("Wrong number of 'switch' state-parameters received.", 0, resultsSwitch.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsWarning.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsError.getReceivedCounter());
-		assertEquals("Wrong number of 'parameter' received.", 1, resultsParameters.getReceivedCounter());
-		
-		assertFalse("CPU_Temperature of '30' should result in 1 'warning'.", resultsWarning.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
-		assertTrue("CPU_Temperature of '30' should result in NO 'error'.", resultsError.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
+		runTest(expectedMessages, expectedStates, name, value);
 		
 		System.out.println("UpperLimit Validation (1 warning, no error) finished successfully.");
 	}
@@ -167,27 +144,17 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	/*
 	 * UpperLimit Test
 	 * Tests temperature parameter with a value of '70'. 
-	 * Below all limits: 1 warning, 1 error.
+	 * Above all limits: 1 warning, 1 error.
 	 */
 	@Test
 	public void testErrorCpuTemperatureParameter() throws Exception {
-		Parameter testParameter = new Parameter("CPU_TEMPERATURE", "Temperature of CPU board...",
-				System.currentTimeMillis(), 70, "Degree celsius");
+		int[] expectedMessages = {0, 1 , 1, 1};  //State, Warning, Error, Parameter
+		boolean[] expectedStates = {false, false}; //Warning, Error
+		String name = "CPU_TEMPERATURE";
+		int value = 70;
+
+		runTest(expectedMessages, expectedStates, name, value);
 		
-		producer.sendBodyAndHeader(testParameter, "name", "CPU_TEMPERATURE");
-
-		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
-
-		assertEquals("Wrong number of 'switch' state-parameters received.", 0, resultsSwitch.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsWarning.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsError.getReceivedCounter());
-		assertEquals("Wrong number of 'parameter' received.", 1, resultsParameters.getReceivedCounter());
-
-		assertFalse("CPU_Temperature of '70' should result in 1 'warning'.", resultsWarning.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
-		assertFalse("CPU_Temperature of '70' should result in 1 'error'.", resultsError.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
-
 		System.out.println("UpperLimit Validation (1 warning, 1 error) finished successfully.");
 	}
 	
@@ -199,50 +166,29 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testValidBatteryVoltageParameter() throws Exception {
-		Parameter testParameter = new Parameter("BATTERY_VOLTAGE", "Voltage of battery...",
-				System.currentTimeMillis(), 12, "Volts");
+		int[] expectedMessages = {0, 1 , 1, 1};  //State, Warning, Error, Parameter
+		boolean[] expectedStates = {true, true}; //Warning, Error
+		String name = "BATTERY_VOLTAGE";
+		int value = 12;
+
+		runTest(expectedMessages, expectedStates, name, value);
 		
-		producer.sendBodyAndHeader(testParameter, "name", "BATTERY_VOLTAGE");
-
-		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
-
-		assertEquals("Wrong number of 'switch' state-parameters received.", 0, resultsSwitch.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsWarning.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsError.getReceivedCounter());
-		assertEquals("Wrong number of 'parameter' received.", 1, resultsParameters.getReceivedCounter());
-		
-		assertTrue("BATTERY_VOLTAGE of '12' should result in NO 'warning'.", resultsWarning.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
-
-		assertTrue("BATTERY_VOLTAGE of '12' should result in NO 'error'.", resultsError.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
-
 		System.out.println("LowerLimit Validation (no warning, no error) finished successfully.");
 	}
 
 	/*
 	 * LowerLimit Test
 	 * Tests BATTERY_VOLTAGE parameter with a value of '8'.
-	 * Above all limits: 1 warning, no error.
+	 * Below warning limit: 1 warning, no error.
 	 */
 	@Test
 	public void testWarningBatteryVoltageParameter() throws Exception {
-		Parameter testParameter = new Parameter("BATTERY_VOLTAGE", "Voltage of battery...",
-				System.currentTimeMillis(), 8, "Volts");
-		
-		producer.sendBodyAndHeader(testParameter, "name", "BATTERY_VOLTAGE");
+		int[] expectedMessages = {0, 1 , 1, 1};  //State, Warning, Error, Parameter
+		boolean[] expectedStates = {false, true}; //Warning, Error
+		String name = "BATTERY_VOLTAGE";
+		int value = 8;
 
-		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
-
-		assertEquals("Wrong number of 'switch' state-parameters received.", 0, resultsSwitch.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsWarning.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsError.getReceivedCounter());
-		assertEquals("Wrong number of 'parameter' received.", 1, resultsParameters.getReceivedCounter());
-		
-		assertFalse("BATTERY_VOLTAGE of '8' should result in 1 'warning'.", resultsWarning.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
-		assertTrue("BATTERY_VOLTAGE of '8' should result in NO 'error'.", resultsError.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
+		runTest(expectedMessages, expectedStates, name, value);
 		
 		System.out.println("LowerLimit Validation (1 warning, no error) finished successfully.");
 	}
@@ -250,28 +196,49 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	/*
 	 * LowerLimit Test
 	 * Tests BATTERY_VOLTAGE parameter with a value of '4'.
-	 * Above all limits: 1 warning, 1 error.
+	 * Below all limits: 1 warning, 1 error.
 	 */
 	@Test
 	public void testErrorBatteryVoltageParameter() throws Exception {
-		Parameter testParameter = new Parameter("BATTERY_VOLTAGE", "Voltage of battery...",
-				System.currentTimeMillis(), 4, "Volts"); 
-			
-		producer.sendBodyAndHeader(testParameter, "name", "BATTERY_VOLTAGE");
+		int[] expectedMessages = {0, 1 , 1, 1};  //State, Warning, Error, Parameter
+		boolean[] expectedStates = {false, false}; //Warning, Error
+		String name = "BATTERY_VOLTAGE";
+		int value = 4;
 
-		awaitMessagesInResultsSwitchWarningErrorParameter(0, 1, 1, 1);
-
-		assertEquals("Wrong number of 'switch' state-parameters received.", 0, resultsSwitch.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsWarning.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", 1, resultsError.getReceivedCounter());
-		assertEquals("Wrong number of 'parameter' received.", 1, resultsParameters.getReceivedCounter());
-
-		assertFalse("BATTERY_VOLTAGE of '4' should result in 1 'warning'.", resultsWarning.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
-		assertFalse("BATTERY_VOLTAGE of '4' should result in 1 'error'.", resultsError.getReceivedExchanges().get(0).getIn()
-				.getBody(StateParameter.class).getStateValue());
-
+		runTest(expectedMessages, expectedStates, name, value);
+		
 		System.out.println("LowerLimit Validation (1 warning, 1 error) finished successfully.");
+	}
+	
+	/**
+	 * Method to run the actual test, since the tests itself are all the same only with different parameters. 
+	 * 
+	 * @param expectedMessages 4 integers for expected messages: state, warning, error, parameter
+	 * @param expectedStates   2 booleans for expected states: warning, error
+	 * @param name			   name of the parameter 
+	 * @param value            value of the parameter
+	 * @throws Exception
+	 */
+	private void runTest(int[] expectedMessages, boolean[] expectedStates, String name, int value) {
+		Parameter testParameter = new Parameter(name, "dummy description...",
+				System.currentTimeMillis(), value, "dummy unit...");
+		
+		producer.sendBodyAndHeader(testParameter, "name", name);
+
+		waitForMessagesInMockEndpoints(expectedMessages[0], expectedMessages[1], expectedMessages[2], expectedMessages[3]);
+
+		assertEquals("Wrong number of 'switch' state-parameters received.", expectedMessages[0], resultsSwitch.getReceivedCounter());
+		assertEquals("Wrong number of 'warning' state-parameters received.", expectedMessages[1], resultsWarning.getReceivedCounter());
+		assertEquals("Wrong number of 'error' state-parameters received.", expectedMessages[2], resultsError.getReceivedCounter());
+		assertEquals("Wrong number of 'parameter' received.", expectedMessages[3], resultsParameters.getReceivedCounter());
+		
+		assertEquals("'warning' state-parameter for "+ name + " with value of '" + value + "' has a false state.", 
+				expectedStates[0], 
+				resultsWarning.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
+
+		assertEquals("'error' state-parameter for "+ name + " with value of '" + value + "' has a false state.", 
+				expectedStates[1], 
+				resultsError.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
 	}
 	
 	/**
@@ -284,14 +251,18 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 	 * @param resultsParameterCount
 	 * @throws InterruptedException
 	 */
-	private void awaitMessagesInResultsSwitchWarningErrorParameter(int resultSwitchCount, 
-			int resultsWarningCount,int resultErrorCount, int resultsParameterCount) throws Exception {
+	private void waitForMessagesInMockEndpoints(int resultSwitchCount, 
+			int resultsWarningCount,int resultErrorCount, int resultsParameterCount)  {
 		for (int i = 2; !(resultsSwitch.getReceivedCounter() >= resultSwitchCount
 				&& resultsWarning.getReceivedCounter() >= resultsWarningCount
 				&& resultsError.getReceivedCounter() >= resultErrorCount && resultsParameters
 				.getReceivedCounter() >= resultsParameterCount) && i < 4096; i *= 2) {
 
-			Thread.sleep(i);
+			try {
+				Thread.sleep(i);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
 		}
 	}
