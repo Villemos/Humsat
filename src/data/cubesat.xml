@@ -45,15 +45,11 @@
 			<Parameter parameterTypeRef="16bitInteger" name="LATITUDE"/>
 
 			<Parameter parameterTypeRef="32bitUInteger" name="ONBOARD_TIME" />
-			<Parameter parameterTypeRef="32bitUInteger" name="DEPLOYMENT_TIME" />
-			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_MAIN_SWITCH" />
-			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_TRANSMITTER" />
 			<Parameter parameterTypeRef="64bitFloat" name="CPU_TEMPERATURE" />
 			<Parameter parameterTypeRef="64bitFloat" name="BATTERY_VOLTAGE" />
 
 			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_VIDEO_STREAM" />
 			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_PAYLOAD" />
-			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_PAYLOAD_DEPLOYMENT" />
 		</ParameterSet>
 
 
@@ -100,9 +96,6 @@
 				
 				<EntryList>
 					<ParameterRefEntry parameterRef="ONBOARD_TIME" />
-					<ParameterRefEntry parameterRef="DEPLOYMENT_TIME" />
-					<ParameterRefEntry parameterRef="STATE_OF_MAIN_SWITCH" />
-					<ParameterRefEntry parameterRef="STATE_OF_TRANSMITTER" />
 					<ParameterRefEntry parameterRef="CPU_TEMPERATURE" />
 					<ParameterRefEntry parameterRef="BATTERY_VOLTAGE" />
 				</EntryList>
@@ -121,7 +114,6 @@
 				<EntryList>
 					<ParameterRefEntry parameterRef="STATE_OF_VIDEO_STREAM" />
 					<ParameterRefEntry parameterRef="STATE_OF_PAYLOAD" />
-					<ParameterRefEntry parameterRef="STATE_OF_PAYLOAD_DEPLOYMENT" />
 				</EntryList>
 			</SequenceContainer>
 			

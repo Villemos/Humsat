@@ -14,7 +14,7 @@
 	<bean id="cpu.temperature.warning" class="org.hbird.business.validation.parameter.UpperLimit">
 		<constructor-arg index="0" value="High cpu temperature warning"/>
 		<constructor-arg index="1" value=""/>
-		<constructor-arg index="2" value="10"/>
+		<constructor-arg index="2" value="40"/>
 	</bean>
 
 	<bean id="cpu.temperature.error" class="org.hbird.business.validation.parameter.UpperLimit">

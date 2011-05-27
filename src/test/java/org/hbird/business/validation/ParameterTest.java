@@ -117,7 +117,7 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 		int[] expectedMessages = {0, 1 , 1, 1}; 
 		boolean[] expectedStates = {true, true};
 		String name = "CPU_TEMPERATURE";
-		int value = 10;
+		int value = 30;
 
 		runTest(expectedMessages, expectedStates, name, value);
 
@@ -134,7 +134,7 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 		int[] expectedMessages = {0, 1 , 1, 1};  //State, Warning, Error, Parameter
 		boolean[] expectedStates = {false, true}; //Warning, Error
 		String name = "CPU_TEMPERATURE";
-		int value = 30;
+		int value = 50;
 
 		runTest(expectedMessages, expectedStates, name, value);
 		

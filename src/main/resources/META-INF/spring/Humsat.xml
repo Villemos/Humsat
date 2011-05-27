@@ -32,15 +32,15 @@
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer" />
 
-<!-- 		<route> -->
-<!-- 			<from uri="activemq:topic:Parameters" /> -->
+		<route>
+			<from uri="activemq:topic:Parameters" />
 <!-- 			<to uri="activemq:queue:Parameters" /> -->
 			
-<!-- 			<setBody> -->
-<!-- 				<simple>${in.body.name}: ${in.body.value}</simple> -->
-<!--         	</setBody> -->
-<!-- 			<to uri="stream:out" /> -->
-<!-- 		</route> -->
+			<setBody>
+				<simple>${in.body.name}: ${in.body.value}</simple>
+        	</setBody>
+			<to uri="stream:out" />
+		</route>
 
 		<!-- <routeContextRef ref="jsonPublishRoutes"/> -->
 		<!-- <routeContextRef ref="commandreleaserRoutes" /> -->
