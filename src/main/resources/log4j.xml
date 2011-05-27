@@ -38,12 +38,12 @@
 
 	<!-- LOGGERS -->
 	<logger name="org.apache">
-		<level value="INFO" />
+		<level value="WARN" />
 		<appender-ref ref="CONSOLE" /> 
 	</logger>
 	
 	<logger name="org.springframework">
-		<level value="INFO" />
+		<level value="WARN" />
 		<appender-ref ref="CONSOLE" /> 
 	</logger>
 	
@@ -54,7 +54,7 @@
 	
 	<!--	ROOT LOGGER-->
 	<root>
-		<level value="INFO" />
+		<level value="WARN" />
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="LOGFILE" />
 <!-- 		<appender-ref ref="ACTIVEMQ" /> -->
