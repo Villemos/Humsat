@@ -23,12 +23,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
- * Validator-component integration test.
+ * Validator-component (upper/lower limit) integration test.
  * 
  * //FIXME Get test to use JUnit's parameterized feature. Tried it, but it won't load the application context. 
  */
 @ContextConfiguration(locations = { "file:src/main/resources/humsat-validator.xml" })
-public class ParameterTest extends AbstractJUnit4SpringContextTests {
+public class ParameterUpperLowerLimitTest extends AbstractJUnit4SpringContextTests {
 	protected static boolean thisIsTheFirstRun = true;
 
 	@EndpointInject(uri = "mock:ResultsWarning")
