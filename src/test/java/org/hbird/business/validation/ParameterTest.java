@@ -7,13 +7,10 @@ package org.hbird.business.validation;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.hbird.exchange.type.Parameter;
@@ -26,11 +23,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
- * Integration test for 'Validator' Component.
- * //FIXME Get test to use JUnit's parameterized feature. Tried it, but it doesn't seem to load the application context. 
+ * Validator-component integration test.
+ * 
+ * //FIXME Get test to use JUnit's parameterized feature. Tried it, but it won't load the application context. 
  */
 @ContextConfiguration(locations = { "file:src/main/resources/humsat-validator.xml" })
 public class ParameterTest extends AbstractJUnit4SpringContextTests {
+	protected static boolean thisIsTheFirstRun = true;
+
 	@EndpointInject(uri = "mock:ResultsWarning")
 	protected MockEndpoint resultsWarning = null;
 
@@ -51,13 +51,11 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 
 	@Before
 	public void initialize() throws Exception {
-		// The 'humsat-validator' context consists of 12 routes 
-		// only. If there are more routes, the initialization 
-		// method has been run already. The additional routes needed 
-		// for this integration test may not be added again. 
-		List<Route> routes = validatorContext.getRoutes();
-
-		if (routes.size() == 12) {
+		//Check if the initialization has been run already. Between the tests, the
+		//Camel context stays the same, so routes may not be added during the
+		//initialization phase of further tests.
+		
+		if (thisIsTheFirstRun) {
 			// Add a route to access activemq:topic:ParametersWarning via a mock endpoint.
 			validatorContext.addRoutes(new RouteBuilder() {
 				public void configure() throws Exception {
@@ -85,6 +83,8 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 					from("activemq:topic:Parameters").to("mock:ResultsParameter");
 				}
 			});
+			
+			thisIsTheFirstRun = false;
 		}
 
 		// In case that there are still old parameters left in the parameters topic,
@@ -121,7 +121,7 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 
 		runTest(expectedMessages, expectedStates, name, value);
 
-		System.out.println("UpperLimit Validation (no warning, no error) finished successfully.");
+		System.out.println("UpperLimit validation (no warning, no error) finished successfully.");
 	}
 
 	/*
@@ -138,7 +138,7 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 
 		runTest(expectedMessages, expectedStates, name, value);
 		
-		System.out.println("UpperLimit Validation (1 warning, no error) finished successfully.");
+		System.out.println("UpperLimit validation (1 warning, no error) finished successfully.");
 	}
 
 	/*
@@ -155,7 +155,7 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 
 		runTest(expectedMessages, expectedStates, name, value);
 		
-		System.out.println("UpperLimit Validation (1 warning, 1 error) finished successfully.");
+		System.out.println("UpperLimit validation (1 warning, 1 error) finished successfully.");
 	}
 	
 	
@@ -173,7 +173,7 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 
 		runTest(expectedMessages, expectedStates, name, value);
 		
-		System.out.println("LowerLimit Validation (no warning, no error) finished successfully.");
+		System.out.println("LowerLimit validation (no warning, no error) finished successfully.");
 	}
 
 	/*
@@ -190,7 +190,7 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 
 		runTest(expectedMessages, expectedStates, name, value);
 		
-		System.out.println("LowerLimit Validation (1 warning, no error) finished successfully.");
+		System.out.println("LowerLimit validation (1 warning, no error) finished successfully.");
 	}
 
 	/*
@@ -207,7 +207,7 @@ public class ParameterTest extends AbstractJUnit4SpringContextTests {
 
 		runTest(expectedMessages, expectedStates, name, value);
 		
-		System.out.println("LowerLimit Validation (1 warning, 1 error) finished successfully.");
+		System.out.println("LowerLimit validation (1 warning, 1 error) finished successfully.");
 	}
 	
 	/**
