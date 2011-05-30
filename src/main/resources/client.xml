@@ -11,9 +11,9 @@
 
 	<context:annotation-config />
 
-	<bean id="navigation.client" class="com.clearstream.humsat.NavigationListener"/>
+	<bean id="navigation.client" class="org.hbird.humsat.NavigationListener"/>
 	
-	<bean id="parameter.client" class="com.clearstream.humsat.ParameterListener"/>
+	<bean id="parameter.client" class="org.hbird.humsat.ParameterListener"/>
 
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer"/>
