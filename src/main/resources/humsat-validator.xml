@@ -112,6 +112,12 @@
 		
 		<!-- Routes for controlling the validators -->
 		<route>
+			<from uri="activemq:topic:Parameters?selector=name='BATTERY_VOLTAGE_UPDATE'" />
+			<to uri="bean:battery.voltage.warning?method=processLimit" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
 			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_VIDEO_STREAM_SWITCH'" />
 			<to uri="bean:state.of.video.stream.error?method=processEnabled" />
 			<to uri="activemq:topic:ParametersSwitch" />
