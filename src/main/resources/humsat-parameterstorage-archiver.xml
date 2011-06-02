@@ -37,6 +37,8 @@
 
 		<route>
 			<from uri="activemq:topic:Parameters" />
+			<setHeader headerName="name"> <simple>${body.name}</simple> </setHeader>
+			<setHeader headerName="timestamp"> <simple>${body.timestamp}</simple> </setHeader>
 			<marshal ref="xstream" />
 			<to uri="bean:databaseArchiver" />
 		</route>
