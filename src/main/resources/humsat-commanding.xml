@@ -12,8 +12,11 @@
 	<context:annotation-config/>
 
 	<bean id="commandreleaser" class="org.hbird.business.command.releaser.CommandReleaser"/>
+	
+	<bean id="header.mapper" class="org.hbird.exchange.utilities.AllFields"/>
+	
 
-	<routeContext id="commandreleaserRoutes" xmlns="http://camel.apache.org/schema/spring"> 
+	<camelContext id="commandreleaserContext" xmlns="http://camel.apache.org/schema/spring"> 
 	
 		<!-- Route to receive and store state parameters. -->
 		<route>
@@ -23,19 +26,19 @@
 
 		<!-- Route to receive commands injected from somebody, and release them. -->
 		<route>
-			<from uri="activemq:queue:Commands" />
+			<from uri="activemq:queue:Commands1" />
 			<to uri="bean:commandreleaser" />
 			<to uri="bean:header.mapper"/>
-			<to uri="activemq:queue:ReleasedCommands" />
+			<to uri="activemq:queue:ReleasedCommands1" />
 		</route>
 		
 		<!-- Route to inject tasks, used by the commandreleaser. -->
 		<route>
 			<from uri="direct:tasks" />
 			<to uri="bean:header.mapper"/>
-			<to uri="activemq:queue:Tasks" />
+			<to uri="activemq:queue:Tasks1" />
 		</route>
 		
-	</routeContext>
+	</camelContext>
 
 </beans>

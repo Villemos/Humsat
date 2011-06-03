@@ -11,7 +11,9 @@
 
 	<context:annotation-config/>
 
-	<!-- DEPLOY PAYLOAD -->
+<!-- Command:
+	 DEPLOY PAYLOAD
+-->
 	<bean id="deploy.payload" class="org.hbird.exchange.type.Command">
 		<constructor-arg index="0" value="Set Transmitter State"/>
 		<constructor-arg index="1" value="Will deploy the payload."/>
@@ -28,15 +30,7 @@
 		<constructor-arg index="6" value="0"/>
 	</bean>
 
-	<bean id="value.boolean.false" class="java.lang.Boolean">
-		<constructor-arg index="0" value="false"/>
-	</bean>
-
-	<bean id="value.boolean.true" class="java.lang.Boolean">
-		<constructor-arg index="0" value="true"/>
-	</bean>
-
-
+	<!-- Disable limit check for 'deploy payload' -->
 	<bean id="deploypayload.check.disable.value" class="org.hbird.exchange.type.Parameter">
 		<constructor-arg index="0" value="State of Deploy Payload Limit Switch"/>
 		<constructor-arg index="1" value=""/>
@@ -44,15 +38,15 @@
 		<constructor-arg index="3" value="State"/>	
 	</bean>
 
-	<!-- long deltaTime, String name, String stateOff, Boolean value, String description, String unit -->
 	<bean id="deploypayload.check.disable" class="org.hbird.exchange.tasks.actions.SetParameter">
+		<!-- long deltaTime, String name, String stateOff, Boolean value, String description, String unit -->
 		<constructor-arg index="0" value="Task to set State of Deploy Payload Limit Switch"/>
 		<constructor-arg index="1" value=""/>		
 		<constructor-arg index="2" value="0"/>
 		<constructor-arg index="3" ref="deploypayload.check.disable.value"/>
 	</bean>
 
-
+	<!-- Update limit check for 'deploy payload' -->
 	<bean id="deploypayload.check.limit.value" class="org.hbird.exchange.type.Parameter">
 		<constructor-arg index="0" value="State of Deploy Payload Limit"/>
 		<constructor-arg index="1" value=""/>
@@ -67,8 +61,7 @@
 		<constructor-arg index="3" ref="deploypayload.check.limit.value"/>
 	</bean>
 
-
-
+	<!-- Enable limit check for 'deploy payload' -->
 	<bean id="deploypayload.check.enable.value" class="org.hbird.exchange.type.Parameter">
 		<constructor-arg index="0" value="State of Deploy Payload Limit Switch"/>
 		<constructor-arg index="1" value=""/>
@@ -87,7 +80,9 @@
 
 
 
-	<!-- PAYLOAD STATE -->
+<!-- Command:
+	 PAYLOAD STATE
+-->
 	<bean id="set.payload.state" class="org.hbird.exchange.type.Command">
 		<constructor-arg index="0" value="Set Payload State"/>
 		<constructor-arg index="1" value="Turns the payload on or off."/>
@@ -116,8 +111,7 @@
 		<constructor-arg index="4"><null/></constructor-arg>	
 	</bean>
 
-
-
+	<!-- Disable limit check for 'payload' -->
 	<bean id="payloadstate.check.disable.value" class="org.hbird.exchange.type.Parameter">
 		<constructor-arg index="0" value="State of Payload Limit Switch"/>
 		<constructor-arg index="1" value=""/>
@@ -132,8 +126,7 @@
 		<constructor-arg index="3" ref="payloadstate.check.disable.value"/>
 	</bean>
 
-
-
+	<!-- Update limit check for 'payload' -->
 	<bean id="payloadstate.check.limit.value" class="org.hbird.exchange.type.Parameter">
 		<constructor-arg index="0" value="State of Payload Limit"/>
 		<constructor-arg index="1" value=""/>
@@ -141,8 +134,8 @@
 		<constructor-arg index="3" value="State"/>	
 	</bean>
 
-	<!-- long deltaTime, String name, Object value, String clazz, String description, String unit, String commandArgumentName -->
 	<bean id="payloadstate.check.limit" class="org.hbird.exchange.tasks.actions.ReflectiveSetParameter">
+		<!-- long deltaTime, String name, Object value, String clazz, String description, String unit, String commandArgumentName -->
 		<constructor-arg index="0" value="Task to set State of Payload Limit"/>
 		<constructor-arg index="1" value=""/>
 		<constructor-arg index="2" value="1000"/>
@@ -150,9 +143,7 @@
 		<constructor-arg index="4" value="New Payload State"/>
 	</bean>
 
-
-
-
+	<!-- Enable limit check for 'payload' -->
 	<bean id="payloadstate.check.enable.value" class="org.hbird.exchange.type.Parameter">
 		<constructor-arg index="0" value="State of Payload Limit Switch"/>
 		<constructor-arg index="1" value=""/>
@@ -170,8 +161,10 @@
 
 
 
-
-	<!-- TRANSMITTER STATE -->
+<!-- Command:
+	 TRANSMITTER STATE
+-->
+	
 	<bean id="set.transmitter.state" class="org.hbird.exchange.type.Command">
 		<constructor-arg index="0" value="Set Transmitter State"/>
 		<constructor-arg index="1" value="Will turn the transmitter on or off."/>
@@ -200,7 +193,7 @@
 		<constructor-arg index="4"><null/></constructor-arg>	
 	</bean>
 
-
+	<!-- Disable limit check for 'payload' -->
 	<bean id="transmitterstate.check.disable.value" class="org.hbird.exchange.type.Parameter">
 		<constructor-arg index="0" value="State of Transmitter Limit Switch"/>
 		<constructor-arg index="1" value=""/>
@@ -215,8 +208,7 @@
 		<constructor-arg index="3" ref="transmitterstate.check.disable.value"/>
 	</bean>
 
-
-
+	<!-- Update limit check for 'payload' -->
 	<bean id="transmitterstate.check.limit.value" class="org.hbird.exchange.type.Parameter">
 		<constructor-arg index="0" value="State of Transmitter Limit"/>
 		<constructor-arg index="1" value=""/>
@@ -232,8 +224,7 @@
 		<constructor-arg index="4" value="New Transmitter State"/>
 	</bean>
 
-
-
+	<!-- Enable limit check for 'payload' -->
 	<bean id="transmitterstate.check.enable.value" class="org.hbird.exchange.type.Parameter">
 		<constructor-arg index="0" value="State of Transmitter Limit"/>
 		<constructor-arg index="1" value=""/>
@@ -251,9 +242,9 @@
 
 
 
-
-
-	<!-- SEND DIAGNOSIS REPORT -->
+<!-- Command:
+	 SEND DIAGNOSIS REPORT
+-->
 	<bean id="send.diagnosis.report" class="org.hbird.exchange.type.Command">
 		<constructor-arg index="0" value="Send Diagnosis Report"/>
 		<constructor-arg index="1" value="The satellite will send a diagnosis report."/>
@@ -267,7 +258,9 @@
 
 
 
-	<!-- SET TIME -->		
+<!-- Command:
+	 SET TIME
+-->
 	<bean id="set.time" class="org.hbird.exchange.type.Command">
 		<constructor-arg index="0" value="Set Time"/>
 		<constructor-arg index="1" value="Sets the onboard time"/>
@@ -291,6 +284,16 @@
 	</bean>
 
 
+<!-- Generic definitions:
+-->
+	<bean id="value.boolean.false" class="java.lang.Boolean">
+		<constructor-arg index="0" value="false"/>
+	</bean>
+
+	<bean id="value.boolean.true" class="java.lang.Boolean">
+		<constructor-arg index="0" value="true"/>
+	</bean>
+	
 	<bean id="objects" class="java.util.ArrayList">
 		<constructor-arg>
 			<list>
