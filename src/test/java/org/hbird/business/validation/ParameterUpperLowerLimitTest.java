@@ -17,7 +17,6 @@ import org.hbird.exchange.type.Parameter;
 import org.hbird.exchange.type.StateParameter;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -25,10 +24,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
- * Validator-component (upper/lower limit) integration test.
+ * Integration test for the validate component (upper/lower limit).
  * 
- * //FIXME Get test to use JUnit's parameterized feature. Tried it, but it won't
- * load the application context.
+ * //FIXME It would be nice to use JUnit's parameterized testing feature. 
+ * I tried it, but it won't load the application context.
  */
 @ContextConfiguration(locations = { "file:src/main/resources/humsat-validator.xml" })
 public class ParameterUpperLowerLimitTest extends
@@ -58,39 +57,17 @@ public class ParameterUpperLowerLimitTest extends
 		// initialization phase of further tests. Although, after e.g. 'testStateSwitch'
 		// which dirties the context, it has to be run again.
 		if (validatorContext.getRoutes().size() == 13) {
-			// Add a route to access activemq:topic:ParametersWarning via a mock
-			// endpoint.
-			validatorContext.addRoutes(new RouteBuilder() {
-				public void configure() throws Exception {
-					from("activemq:topic:ParametersWarning")
-						.to("mock:ResultsWarning");
-				}
-			});
 
-			// Add a route to access activemq:topic:ParametersError via a mock
-			// endpoint.
+			// Add routes to access activemq topics via via mock endpoints.
 			validatorContext.addRoutes(new RouteBuilder() {
 				public void configure() throws Exception {
-					from("activemq:topic:ParametersError").to(
-							"mock:ResultsError");
-				}
-			});
-
-			// Add a route to access activemq:topic:ParametersSwitch via a mock
-			// endpoint.
-			validatorContext.addRoutes(new RouteBuilder() {
-				public void configure() throws Exception {
-					from("activemq:topic:ParametersSwitch").to(
-							"mock:ResultsSwitch");
-				}
-			});
-
-			// Add a route to access activemq:topic:Parameters tier via a mock
-			// endpoint.
-			validatorContext.addRoutes(new RouteBuilder() {
-				public void configure() throws Exception {
-					from("activemq:topic:Parameters").to(
-							"mock:ResultsParameter");
+					from("activemq:topic:ParametersWarning").to("mock:ResultsWarning");
+					
+					from("activemq:topic:ParametersError").to("mock:ResultsError");
+					
+					from("activemq:topic:ParametersSwitch").to("mock:ResultsSwitch");
+					
+					from("activemq:topic:Parameters").to("mock:ResultsParameter");
 				}
 			});
 		}
