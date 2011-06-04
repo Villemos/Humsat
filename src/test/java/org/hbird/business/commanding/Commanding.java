@@ -5,6 +5,8 @@
 
 package org.hbird.business.commanding;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  */
 @ContextConfiguration(locations = { "file:src/main/resources/humsat-commanding.xml" })
 public class Commanding extends AbstractJUnit4SpringContextTests {
-	@EndpointInject(uri = "mock:ResultsCommands1")
+	@EndpointInject(uri = "mock:ResultsCommands")
 	protected MockEndpoint resultsCommands= null;
 
 	@EndpointInject(uri = "mock:ResultsTasks")
@@ -50,16 +52,12 @@ public class Commanding extends AbstractJUnit4SpringContextTests {
 		// endpoint.
 		commandreleaserContext.addRoutes(new RouteBuilder() {
 			public void configure() throws Exception {
-				from("activemq:ReleasedCommands1").to("mock:ResultsCommands");
+				from("activemq:queue:ReleasedCommands").to("mock:ResultsCommands");
 
-				from("activemq:queue:Tasks1").to("mock:ResultsTasks");
+				from("activemq:queue:Tasks").to("mock:ResultsTasks");
 			}
 		});
 
-		
-		//ApplicationContext temp1 = new FileSystemXmlApplicationContext("file:src/main/resources/humsat-metadata-commands.xml");
-		//CamelContext test = (CamelContext) temp1.getBean("archiverContext");
-		
 		// In case that there are still old parameters left in the parameters
 		// topic, wait until all have been routed to the 'results' components, so that
 		// they don't disturb the testing.
@@ -80,6 +78,7 @@ public class Commanding extends AbstractJUnit4SpringContextTests {
 	
 	@Test
 	public void testCommand() throws InterruptedException {
+		//Create and send test-command
 		String name = "Set Transmitter State";
 		String description = "Will deploy the payload.";
 		
@@ -103,14 +102,20 @@ public class Commanding extends AbstractJUnit4SpringContextTests {
 		long executionTime = 0;
 			
 		Command test = new Command(name, description, arguments, lockStates, tasks, releaseTime, executionTime);
-		System.out.println("-------------\n\n\n\n\n\n");
 
 		producer.sendBody(test);
 		
-		for(int i = 0; i < 15; i++) {
+		//Wait max 4sec until a command is received.
+		for (int i = 2; resultsCommands.getReceivedCounter() == 0 && i < 4096; i *= 2) {
 			Thread.sleep(1000);
-			System.out.println("C: " + resultsCommands.getReceivedCounter() + "      T: " + resultsTasks.getReceivedCounter());
 		}
+
+		//TODO not done yet... need to figure out, how to properly configure the commanding chain. The information on the wiki does not seem to be 100% correct.
+		assertEquals("Wrong number of commands has been released.", 1, resultsCommands.getReceivedCounter());
+		assertEquals("Received command is of a wrong type.", "java.util.ArrayList", resultsCommands.getReceivedExchanges().get(0).getIn().getBody().getClass().getName());
+		@SuppressWarnings("unchecked")
+		List <Object> commandList = (List<Object>) resultsCommands.getReceivedExchanges().get(0).getIn().getBody();
+		assertEquals("Wrong number of tasks (?) in the command has been received.", 4, commandList.size());
 	}
 
 	

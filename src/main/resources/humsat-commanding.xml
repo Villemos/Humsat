@@ -7,7 +7,8 @@
        http://www.springframework.org/schema/context 
        http://www.springframework.org/schema/context/spring-context-2.5.xsd
        http://camel.apache.org/schema/spring 
-       http://camel.apache.org/schema/spring/camel-spring.xsd">
+       http://camel.apache.org/schema/spring/camel-spring.xsd
+       ">
 
 	<context:annotation-config/>
 
@@ -26,17 +27,17 @@
 
 		<!-- Route to receive commands injected from somebody, and release them. -->
 		<route>
-			<from uri="activemq:queue:Commands1" />
+			<from uri="activemq:queue:Commands" />
 			<to uri="bean:commandreleaser" />
 			<to uri="bean:header.mapper"/>
-			<to uri="activemq:queue:ReleasedCommands1" />
+			<to uri="activemq:queue:ReleasedCommands" />
 		</route>
 		
 		<!-- Route to inject tasks, used by the commandreleaser. -->
 		<route>
 			<from uri="direct:tasks" />
 			<to uri="bean:header.mapper"/>
-			<to uri="activemq:queue:Tasks1" />
+			<to uri="activemq:queue:Tasks" />
 		</route>
 		
 	</camelContext>
