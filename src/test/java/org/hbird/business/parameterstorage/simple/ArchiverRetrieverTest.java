@@ -19,7 +19,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.hbird.exchange.type.Parameter;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -92,7 +91,6 @@ public class ArchiverRetrieverTest extends TestCase {
 
 					from("activemq:RetrieverCommandsFailed").to("mock:FailedCommands");
 				}
-
 			});
 		
 			// Prepare database
@@ -108,7 +106,7 @@ public class ArchiverRetrieverTest extends TestCase {
 				archiverProducer.sendBody("activemq:topic:Parameters", p);
 			}
 					
-			//Wait to seconds so that the archiver has time to store the parameters. Otherwise, the first 
+			//Wait two seconds so that the archiver has time to store the parameters. Otherwise, the first 
 			//test will fail.
 			//TODO implement a nicer solution than 'just wait 2 seconds'
 			Thread.sleep(2000);
