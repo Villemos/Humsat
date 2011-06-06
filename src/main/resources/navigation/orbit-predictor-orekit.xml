@@ -11,8 +11,8 @@
 
 	<context:annotation-config/>
 
-	<import resource="classpath:humsat-metadata-locations.xml" />
-	<import resource="classpath:humsat-metadata-satellite.xml" />
+	<import resource="classpath:metadata/locations.xml" />
+	<import resource="classpath:metadata/satellite.xml" />
 
 	<!-- The beans required to simulate the satellite orbit.  -->
 	<bean id="orbit.predictor.predicted" class="org.hbird.business.navigation.OrbitPredictor">
@@ -34,7 +34,7 @@
 	</bean>
 	
 	
-	<routeContext id="orbitalpredictionRoutes" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="orbitPredictorContext" xmlns="http://camel.apache.org/schema/spring">
 
 		<route>
 			<from uri="activemq:queue:OrbitalPredictionRequests" />
@@ -57,6 +57,6 @@
 			<to uri="bean:orbit.scheduler.predicted?method=processOrbitalState"/>
 		</route>
 
-	</routeContext>
+	</camelContext>
 
 </beans>

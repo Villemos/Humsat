@@ -14,7 +14,7 @@
 	<import resource="classpath:humsat-metadata-locations.xml" />
 	<import resource="classpath:humsat-metadata-satellite.xml" />
 	
-	<bean id="mapper" class="org.hbird.exchange.utilities.AllFields"/>
+	<bean id="header.mapper" class="org.hbird.exchange.utilities.AllFields"/>
 	
 	<!-- String name, String description, String unit, double angularFrequency, double amplitude, double phase, double intercept, long modolus -->
 	<bean id="temperature.at.cpu.board" class="org.hbird.business.simpleparametersimulator.SinusCurveParameter">

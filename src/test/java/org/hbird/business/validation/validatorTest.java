@@ -29,9 +29,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * //FIXME It would be nice to use JUnit's parameterized testing feature. 
  * I tried it, but it won't load the application context.
  */
-@ContextConfiguration(locations = { "file:src/main/resources/humsat-validator.xml" })
-public class ParameterUpperLowerLimitTest extends
-		AbstractJUnit4SpringContextTests {
+@ContextConfiguration(locations = { "file:src/main/resources/parameterValidator/validator.xml" })
+public class validatorTest extends AbstractJUnit4SpringContextTests {
 	@EndpointInject(uri = "mock:ResultsWarning")
 	protected MockEndpoint resultsWarning = null;
 

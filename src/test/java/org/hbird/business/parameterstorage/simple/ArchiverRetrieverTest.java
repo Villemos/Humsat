@@ -19,6 +19,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.hbird.exchange.type.Parameter;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -75,10 +76,10 @@ public class ArchiverRetrieverTest extends TestCase {
 			//Load contexts
 			ApplicationContext temp;
 
-			temp = new FileSystemXmlApplicationContext("file:src/main/resources/humsat-parameterstorage-archiver.xml");
+			temp = new FileSystemXmlApplicationContext("file:src/main/resources/parameterStorage/archiver.xml");
 			archiverContext = (CamelContext) temp.getBean("archiverContext");
 			
-			temp = new FileSystemXmlApplicationContext("file:src/main/resources/humsat-parameterstorage-retriever.xml");
+			temp = new FileSystemXmlApplicationContext("file:src/main/resources/parameterStorage/retriever.xml");
 			retrieverContext = (CamelContext) temp.getBean("retrieverContext");
 			
 			archiverContext.start();
@@ -107,6 +108,11 @@ public class ArchiverRetrieverTest extends TestCase {
 				archiverProducer.sendBody("activemq:topic:Parameters", p);
 			}
 					
+			//Wait to seconds so that the archiver has time to store the parameters. Otherwise, the first 
+			//test will fail.
+			//TODO implement a nicer solution than 'just wait 2 seconds'
+			Thread.sleep(2000);
+			
 			thisIsTheFirstRun = false;
 		}
 
@@ -138,6 +144,7 @@ public class ArchiverRetrieverTest extends TestCase {
 	 * 
 	 * @throws InterruptedException
 	 */
+	
 	@Test
 	public void testStorageAndRetrievalOfTwoParameters() throws InterruptedException {
 		//Issue retrieve-command
@@ -164,7 +171,7 @@ public class ArchiverRetrieverTest extends TestCase {
 		
 		assertEquals("There should not appear a message in the error queue.", 0, failed.getReceivedCounter());
 	}
-	
+
 	/**
 	 * Tests the retrieval of all parameters from the database.
 	 * 

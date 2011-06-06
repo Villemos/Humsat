@@ -13,7 +13,7 @@
        ">
  
  	<bean id="cubesatXtceModelFactory" class="org.hbird.transport.xtce.XtceModelFactory">
-		<constructor-arg value="src/data/cubesat.xml"></constructor-arg>
+		<constructor-arg value="src/main/resources/transportTier/cubesat-ssm.xml"></constructor-arg>
 	</bean>
 	
 	<bean id="bitsetConverter" class="org.hbird.transport.commons.util.typeconverters.ToBitSetConverter" />
@@ -28,7 +28,7 @@
 		<constructor-arg value="false"></constructor-arg>
 	</bean>
 
-	<camelContext id="counterbirdTransportTierContext" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="ccsdsDecoderContext" xmlns="http://camel.apache.org/schema/spring">
 
 		<route>
 <!-- 			Grab the packets from the message queue -->

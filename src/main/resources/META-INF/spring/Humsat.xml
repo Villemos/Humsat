@@ -11,23 +11,25 @@
 
 	<context:annotation-config />
 
-	<!-- ### Transport Tier ### -->
-	<import resource="classpath:humsat-counterbird-ccsds-transport-tier.xml" />
-	<!-- 	<import resource="classpath:humsat-simulator.xml" /> -->
+	<!-- ### TM data supplier ("transport tier")### -->
+	<import resource="classpath:transportTier/ccsds-decoder.xml" />
+	<!-- 	<import resource="classpath:parameterSimulator/simulator.xml" /> -->
 
 
-	<!-- ### Business Tier ### -->
-	<!-- <import resource="classpath:humsat-jsonpublish.xml" /> -->
-	<import resource="classpath:humsat-validator.xml" />
-	<import resource="classpath:humsat-commanding.xml" />
-	<import resource="classpath:humsat-taskexecutor.xml" />
+	<!-- ### Business tier ### -->
+
+	<import resource="classpath:navigation/orbit-predictor-orekit.xml" />
+	<import resource="classpath:commandingChain/command-releaser.xml" />
+	<import resource="classpath:commandingChain/task-executor.xml" />
+	<import resource="classpath:parameterValidator/validator.xml" />
+<!-- 	<import resource="classpath:parameterStorage/archiver.xml" /> --> 	<!-- Needs a database. -->
+<!-- 	<import resource="classpath:parameterStorage/retriever.xml"/> -->	<!-- Needs a database. -->
+
 <!-- 	<import resource="classpath:humsat-logging.xml" /> -->
-	<import resource="classpath:humsat-orbitalprediction.xml" />
-	<import resource="classpath:humsat-metadata-publisher.xml" />
+<!-- 	<import resource="classpath:humsat-jsonpublish.xml" /> -->
 
-	<!-- Parameterstorage needs a database. See the respective XML file for details. -->
-<!-- 	<import resource="classpath:humsat-parameterstorage-archiver.xml" /> -->
-<!-- 	<import resource="classpath:humsat-parameterstorage-retriever.xml"/> -->
+	<import resource="classpath:metadata/publisher.xml" />
+
 
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer" />
@@ -40,8 +42,6 @@
 			<to uri="stream:out" />
 		</route>
 
-		<!-- <routeContextRef ref="commandreleaserRoutes" /> -->
-		<!-- <routeContextRef ref="taskexecutorRoutes" /> -->
 		<!-- <routeContextRef ref="orbitalpredictionRoutes" /> -->
 		<!-- <routeContextRef ref="metadatapublisherRoutes" /> -->
 		

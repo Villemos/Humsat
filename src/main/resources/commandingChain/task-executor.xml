@@ -11,13 +11,13 @@
 
 	<context:annotation-config/>
 	
-	<bean id="taskexecutor" class="org.hbird.business.command.task.TaskExecutor"/>
+	<bean id="task.executor" class="org.hbird.business.command.task.TaskExecutor"/>
 
-	<routeContext id="taskexecutorRoutes" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="taskExecutorContext" xmlns="http://camel.apache.org/schema/spring">
 
 		<route>
 			<from uri="activemq:queue:Tasks" />
-			<to uri="bean:taskexecutor" />
+			<to uri="bean:task.executor" />
 		</route>
 
 		<route>
@@ -25,5 +25,5 @@
 			<to uri="activemq:topic:Parameters" />
 		</route>
 		
-	</routeContext>
+	</camelContext>
 </beans>

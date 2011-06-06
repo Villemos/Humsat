@@ -32,8 +32,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * Commanding-chain integration test.
  * 
  */
-@ContextConfiguration(locations = { "file:src/main/resources/humsat-commanding.xml" })
-public class Commanding extends AbstractJUnit4SpringContextTests {
+@ContextConfiguration(locations = { "file:src/main/resources/commandingChain/command-releaser.xml" })
+public class CommandReleaserTest extends AbstractJUnit4SpringContextTests {
 	@EndpointInject(uri = "mock:ResultsCommands")
 	protected MockEndpoint resultsCommands= null;
 
@@ -44,13 +44,13 @@ public class Commanding extends AbstractJUnit4SpringContextTests {
 	protected ProducerTemplate producer = null;
 
 	@Autowired
-	protected CamelContext commandreleaserContext = null;
+	protected CamelContext commandReleaserContext = null;
 
 	@Before
 	public void initialize() throws Exception {
 		// Add a route to access activemq:topic:ParametersWarning via a mock
 		// endpoint.
-		commandreleaserContext.addRoutes(new RouteBuilder() {
+		commandReleaserContext.addRoutes(new RouteBuilder() {
 			public void configure() throws Exception {
 				from("activemq:queue:ReleasedCommands").to("mock:ResultsCommands");
 
