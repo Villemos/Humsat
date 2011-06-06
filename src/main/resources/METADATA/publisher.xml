@@ -21,7 +21,7 @@
 
 	<bean id="header.mapper" class="org.hbird.exchange.utilities.AllFields"/>
 	
-	<routeContext id="metadatapublisherRoutes" xmlns="http://camel.apache.org/schema/spring"> 
+	<camelContext id="metadatapublisherRoutes" xmlns="http://camel.apache.org/schema/spring"> 
 			
 		<!-- Route for periodically publishing command definitions. -->
 		<route>
@@ -43,6 +43,6 @@
 			</split>
 		</route>
 			
-	</routeContext>
+	</camelContext>
 
 </beans>
