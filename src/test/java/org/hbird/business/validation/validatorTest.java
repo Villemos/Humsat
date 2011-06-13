@@ -5,74 +5,97 @@
 
 package org.hbird.business.validation;
 
-import static org.junit.Assert.assertEquals;
+import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.hbird.exchange.type.Parameter;
 import org.hbird.exchange.type.StateParameter;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * Integration test for the validate component (upper/lower limit).
  * 
- * //FIXME It would be nice to use JUnit's parameterized testing feature. 
- * I tried it, but it won't load the application context.
+ * //FIXME It would be nice to use JUnit's parameterized testing feature. I
+ * tried it, but it won't load the application context.
  */
-@ContextConfiguration(locations = { "file:src/main/resources/parameterValidator/validator.xml" })
-public class validatorTest extends AbstractJUnit4SpringContextTests {
-	@EndpointInject(uri = "mock:ResultsWarning")
+public class validatorTest extends  TestCase {
+	protected static boolean thisIsTheFirstRun = true;
+
+	// uri = "mock:ResultsWarning"
 	protected MockEndpoint resultsWarning = null;
 
-	@EndpointInject(uri = "mock:ResultsError")
+	// uri = "mock:ResultsError"
 	protected MockEndpoint resultsError = null;
 
-	@EndpointInject(uri = "mock:ResultsSwitch")
+	// uri = "mock:ResultsSwitch"
 	protected MockEndpoint resultsSwitch = null;
 
-	@EndpointInject(uri = "mock:ResultsParameter")
+	// uri = "mock:ResultsParameter"
 	protected MockEndpoint resultsParameters = null;
 
-	@Produce(uri = "activemq:topic:Parameters")
+	// uri = "activemq:topic:Parameters"
 	protected ProducerTemplate producer = null;
 
-	@Autowired
-	protected CamelContext validatorContext = null;
+	protected static CamelContext validatorContext = null;
 
-	@Before
-	public void initialize() throws Exception {
-		// Check if the initialization has been run already. Between the tests,
-		// the Camel context stays the same, so routes may not be added during the
-		// initialization phase of further tests. Although, after e.g. 'testStateSwitch'
-		// which dirties the context, it has to be run again.
-		if (validatorContext.getRoutes().size() == 13) {
 
+	public void setUp() throws Exception {
+		System.out.println("Setup start");
+		// Check if the initialization has been run already. Between the
+		// tests, the Camel context stays the same, so routes may not be added
+		// during the initialization phase of further tests. Although, after 
+		// e.g. 'testStateSwitch' which dirties the context, it has to be run
+		// again.
+		if (thisIsTheFirstRun) {
+			System.out.println("first initialization");
+			
+			// Load contexts
+			ApplicationContext temp;
+			temp = new FileSystemXmlApplicationContext("file:src/main/resources/parameterValidator/validator.xml");
+			
+			validatorContext = (CamelContext) temp.getBean("validatorContext");
+			validatorContext.start();
+	
 			// Add routes to access activemq topics via via mock endpoints.
 			validatorContext.addRoutes(new RouteBuilder() {
 				public void configure() throws Exception {
 					from("activemq:topic:ParametersWarning").to("mock:ResultsWarning");
-					
+
 					from("activemq:topic:ParametersError").to("mock:ResultsError");
-					
+
 					from("activemq:topic:ParametersSwitch").to("mock:ResultsSwitch");
-					
+
 					from("activemq:topic:Parameters").to("mock:ResultsParameter");
 				}
-			});
-		}
 
-		// In case that there are still old parameters left in the parameters
-		// topic, wait until all have been routed to the 'results' components, so that
+			});
+			
+			thisIsTheFirstRun = false;
+			
+			System.out.println("first initialization end");
+
+		}
+		
+		// Prepare producer
+		producer = validatorContext.createProducerTemplate();
+
+
+		// Prepare access to mock components
+		resultsWarning = validatorContext.getEndpoint("mock:ResultsWarning", MockEndpoint.class);
+		resultsError = validatorContext.getEndpoint("mock:ResultsError", MockEndpoint.class);
+		resultsSwitch = validatorContext.getEndpoint("mock:ResultsSwitch", MockEndpoint.class);
+		resultsParameters = validatorContext.getEndpoint("mock:ResultsParameter", MockEndpoint.class);
+
+		// In case that there are still old parameters left in the
+		// parameters
+		// topic, wait until all have been routed to the 'results'
+		// components, so that
 		// they don't disturb the testing.
 		int oldCount = -1;
 		int newCount = 0;
@@ -91,13 +114,13 @@ public class validatorTest extends AbstractJUnit4SpringContextTests {
 		resultsWarning.reset();
 		resultsError.reset();
 		resultsParameters.reset();
+		System.out.println("Setup end");
 	}
 
 	/*
 	 * UpperLimit Test Tests temperature parameter with a value of '10'. Below
 	 * all limits: no warning, no error.
 	 */
-	@DirtiesContext
 	@Test
 	public void testStateSwitch() throws Exception {
 		// Send invalid parameter: 9 Volts is below Humsat's 10 Volts
@@ -106,21 +129,27 @@ public class validatorTest extends AbstractJUnit4SpringContextTests {
 				"This is an invalid battery voltage.",
 				System.currentTimeMillis(), 9, "Volts");
 
-		producer.sendBodyAndHeader(invalidParameter, "name", "BATTERY_VOLTAGE");
+		producer.sendBodyAndHeader("activemq:topic:Parameters", invalidParameter, "name", "BATTERY_VOLTAGE");
 
 		waitForMessagesInMockEndpoints(0, 1, 1, 1);
-		assertEquals("Warning-state of 9 Volt parameter is incorrect.", false, resultsWarning.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
-		assertEquals("Error-state of 9 Volt parameter is incorrect.", true, resultsError.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
+		assertEquals("Warning-state of 9 Volt parameter is incorrect.",
+				false,
+				(boolean) resultsWarning.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
+		assertEquals("Error-state of 9 Volt parameter is incorrect.",
+				true,
+				(boolean) resultsError.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
 
 		// Set the new limit to 7 Volts.
-		Parameter stateChangeParameter = new Parameter("BATTERY_VOLTAGE_UPDATE",
+		Parameter stateChangeParameter = new Parameter(
+				"BATTERY_VOLTAGE_UPDATE",
 				"This is a change of the battery voltage limit.",
 				System.currentTimeMillis(), 7, "Volts");
 
-		producer.sendBodyAndHeader(stateChangeParameter, "name", "BATTERY_VOLTAGE_UPDATE");
+		producer.sendBodyAndHeader("activemq:topic:Parameters", stateChangeParameter, "name", "BATTERY_VOLTAGE_UPDATE");
 
 		waitForMessagesInMockEndpoints(1, 1, 1, 2);
-		assertEquals("Counter of received switch-parameters is incorrect.", 1, resultsSwitch.getReceivedCounter());
+		assertEquals("Counter of received switch-parameters is incorrect.", 1,
+				resultsSwitch.getReceivedCounter());
 
 		// Send valid parameter: 8 Volts is not below Humsat's new 7 Volts
 		// warning-limit.
@@ -128,15 +157,26 @@ public class validatorTest extends AbstractJUnit4SpringContextTests {
 				"This is an valid battery voltage.",
 				System.currentTimeMillis(), 8, "Volts");
 
-		producer.sendBodyAndHeader(validParameter, "name", "BATTERY_VOLTAGE");
+		producer.sendBodyAndHeader("activemq:topic:Parameters", validParameter, "name", "BATTERY_VOLTAGE");
 
 		waitForMessagesInMockEndpoints(1, 2, 2, 3);
 
-		assertEquals("Warning-state of 8 Volt parameter is incorrect.", true, resultsWarning.getReceivedExchanges().get(1).getIn().getBody(StateParameter.class).getStateValue());
-		assertEquals("Error-state of 8 Volt parameter is incorrect.", true, resultsError.getReceivedExchanges().get(1).getIn().getBody(StateParameter.class).getStateValue());
-		assertEquals("Counter of received 'parameters' is incorrect.", 3, resultsParameters.getReceivedCounter());
+		assertEquals("Warning-state of 8 Volt parameter is incorrect.",
+				true,
+				(boolean) resultsWarning.getReceivedExchanges().get(1).getIn().getBody(StateParameter.class).getStateValue());
+		assertEquals("Error-state of 8 Volt parameter is incorrect.",
+				true,
+				(boolean) resultsError.getReceivedExchanges().get(1).getIn().getBody(StateParameter.class).getStateValue());
+		assertEquals("Counter of received 'parameters' is incorrect.",
+				3,
+				resultsParameters.getReceivedCounter());
 
 		System.out.println("Limit-update test finished successfully.");
+		
+		// This test alters the current context, so it has to be stoppend and deleted. 
+		validatorContext.stop();
+		validatorContext = null;
+		thisIsTheFirstRun = true;
 	}
 
 	/*
@@ -161,7 +201,8 @@ public class validatorTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testWarningCpuTemperatureParameter() throws Exception {
-		int[] expectedMessages = { 0, 1, 1, 1 }; // State, Warning, Error, Parameter
+		int[] expectedMessages = { 0, 1, 1, 1 }; // State, Warning, Error,
+													// Parameter
 		boolean[] expectedStates = { false, true }; // Warning, Error
 		String name = "CPU_TEMPERATURE";
 		int value = 50;
@@ -177,7 +218,8 @@ public class validatorTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testErrorCpuTemperatureParameter() throws Exception {
-		int[] expectedMessages = { 0, 1, 1, 1 }; // State, Warning, Error, Parameter
+		int[] expectedMessages = { 0, 1, 1, 1 }; // State, Warning, Error,
+													// Parameter
 		boolean[] expectedStates = { false, false }; // Warning, Error
 		String name = "CPU_TEMPERATURE";
 		int value = 70;
@@ -193,7 +235,8 @@ public class validatorTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testValidBatteryVoltageParameter() throws Exception {
-		int[] expectedMessages = { 0, 1, 1, 1 }; // State, Warning, Error, Parameter
+		int[] expectedMessages = { 0, 1, 1, 1 }; // State, Warning, Error,
+													// Parameter
 		boolean[] expectedStates = { true, true }; // Warning, Error
 		String name = "BATTERY_VOLTAGE";
 		int value = 12;
@@ -204,12 +247,13 @@ public class validatorTest extends AbstractJUnit4SpringContextTests {
 	}
 
 	/*
-	 * LowerLimit Test Tests BATTERY_VOLTAGE parameter with a value of '8'. Below warning limit: 1
-	 * warning, no error.
+	 * LowerLimit Test Tests BATTERY_VOLTAGE parameter with a value of '8'.
+	 * Below warning limit: 1 warning, no error.
 	 */
 	@Test
 	public void testWarningBatteryVoltageParameter() throws Exception {
-		int[] expectedMessages = { 0, 1, 1, 1 }; // State, Warning, Error, Parameter
+		int[] expectedMessages = { 0, 1, 1, 1 }; // State, Warning, Error,
+													// Parameter
 		boolean[] expectedStates = { false, true }; // Warning, Error
 		String name = "BATTERY_VOLTAGE";
 		int value = 8;
@@ -225,7 +269,8 @@ public class validatorTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testErrorBatteryVoltageParameter() throws Exception {
-		int[] expectedMessages = { 0, 1, 1, 1 }; // State, Warning, Error, Parameter
+		int[] expectedMessages = { 0, 1, 1, 1 }; // State, Warning, Error,
+													// Parameter
 		boolean[] expectedStates = { false, false }; // Warning, Error
 		String name = "BATTERY_VOLTAGE";
 		int value = 4;
@@ -250,24 +295,35 @@ public class validatorTest extends AbstractJUnit4SpringContextTests {
 	 *            value of the parameter
 	 * @throws Exception
 	 */
-	private void runTest(int[] expectedMessages, boolean[] expectedStates, String name, int value) {
-		Parameter testParameter = new Parameter(name, "dummy description...",
-				System.currentTimeMillis(), value, "dummy unit...");
-
-		producer.sendBodyAndHeader(testParameter, "name", name);
+	private void runTest(int[] expectedMessages, boolean[] expectedStates,
+			String name, int value) {
+		Parameter testParameter = new Parameter(name, "dummy description...", System.currentTimeMillis(), value, "dummy unit...");
+		
+		if(validatorContext == null) System.out.println("PRODUCER IS NULL");
+		producer.sendBodyAndHeader("activemq:topic:Parameters", testParameter, "name", name);
 
 		waitForMessagesInMockEndpoints(expectedMessages[0],	expectedMessages[1], expectedMessages[2], expectedMessages[3]);
 
-		assertEquals("Wrong number of 'switch' state-parameters received.",	expectedMessages[0], resultsSwitch.getReceivedCounter());
-		assertEquals("Wrong number of 'warning' state-parameters received.", expectedMessages[1], resultsWarning.getReceivedCounter());
-		assertEquals("Wrong number of 'error' state-parameters received.", expectedMessages[2], resultsError.getReceivedCounter());
-		assertEquals("Wrong number of 'parameter' received.", expectedMessages[3], resultsParameters.getReceivedCounter());
+		assertEquals("Wrong number of 'switch' state-parameters received.",
+				expectedMessages[0], 
+				resultsSwitch.getReceivedCounter());
+		assertEquals("Wrong number of 'warning' state-parameters received.",
+				expectedMessages[1], 
+				resultsWarning.getReceivedCounter());
+		assertEquals("Wrong number of 'error' state-parameters received.",
+				expectedMessages[2], 
+				resultsError.getReceivedCounter());
+		assertEquals("Wrong number of 'parameter' received.",
+				expectedMessages[3], 
+				resultsParameters.getReceivedCounter());
 
 		assertEquals("'warning' state-parameter for " + name + " with value of '" + value + "' has a false state.",
-				expectedStates[0], resultsWarning.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
+				expectedStates[0], 
+				(boolean) resultsWarning.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
 
 		assertEquals("'error' state-parameter for " + name + " with value of '"	+ value + "' has a false state.",
-				expectedStates[1],	resultsError.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
+				expectedStates[1],
+				(boolean) resultsError.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
 	}
 
 	/**
@@ -294,9 +350,5 @@ public class validatorTest extends AbstractJUnit4SpringContextTests {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	@After
-	public void tearDown() {
 	}
 }
