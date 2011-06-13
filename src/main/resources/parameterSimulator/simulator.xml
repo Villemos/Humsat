@@ -11,8 +11,8 @@
 
 	<context:annotation-config/>
 	
-	<import resource="classpath:humsat-metadata-locations.xml" />
-	<import resource="classpath:humsat-metadata-satellite.xml" />
+	<import resource="classpath:METADATA/locations.xml" />
+	<import resource="classpath:METADATA/satellite.xml" />
 	
 	<bean id="header.mapper" class="org.hbird.exchange.utilities.AllFields"/>
 	
@@ -128,7 +128,7 @@
 		</route>
 		
 		<route>
-			<from uri="direct:OrbitPredictions"/>
+			<from uri="seda:OrbitPredictions"/>
 						
 			<filter>
             	<simple>${body} is 'org.hbird.exchange.navigation.OrbitalState'</simple>

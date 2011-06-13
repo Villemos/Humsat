@@ -12,8 +12,8 @@
 	<context:annotation-config />
 
 	<!-- ### TM data supplier ("transport tier")### -->
-	<import resource="classpath:transportTier/ccsds-decoder.xml" />
-	<!-- 	<import resource="classpath:parameterSimulator/simulator.xml" /> -->
+<!-- 	<import resource="classpath:transportTier/ccsds-decoder.xml" /> -->
+		<import resource="classpath:parameterSimulator/simulator.xml" />
 
 
 	<!-- ### Business tier ### -->
@@ -25,11 +25,9 @@
 <!-- 	<import resource="classpath:parameterStorage/archiver.xml" /> --> 	<!-- Needs a database. -->
 <!-- 	<import resource="classpath:parameterStorage/retriever.xml"/> -->	<!-- Needs a database. -->
 
-<!-- 	<import resource="classpath:humsat-logging.xml" /> -->
-<!-- 	<import resource="classpath:humsat-jsonpublish.xml" /> -->
-
-	<import resource="classpath:metadata/publisher.xml" />
-
+	<import resource="classpath:humsat-logging.xml" /> 
+ 	<import resource="classpath:humsat-jsonpublish.xml" /> 
+	<import resource="classpath:METADATA/publisher.xml" />
 
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer" />
@@ -42,9 +40,6 @@
 			<to uri="stream:out" />
 		</route>
 
-		<!-- <routeContextRef ref="orbitalpredictionRoutes" /> -->
-		<!-- <routeContextRef ref="metadatapublisherRoutes" /> -->
-		
 	</camelContext>
 
 </beans>

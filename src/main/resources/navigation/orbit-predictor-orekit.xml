@@ -11,8 +11,8 @@
 
 	<context:annotation-config/>
 
-	<import resource="classpath:metadata/locations.xml" />
-	<import resource="classpath:metadata/satellite.xml" />
+	<import resource="classpath:METADATA/locations.xml" />
+	<import resource="classpath:METADATA/satellite.xml" />
 
 	<!-- The beans required to simulate the satellite orbit.  -->
 	<bean id="orbit.predictor.predicted" class="org.hbird.business.navigation.OrbitPredictor">
