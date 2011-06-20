@@ -5,24 +5,30 @@
 
 package org.hbird.business.parameterstorage.simple;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 import org.hbird.exchange.type.Parameter;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 
 /**
@@ -32,20 +38,28 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * the retriever throws an exception on a faulty control string and whether this exception is
  * correctly caught.
  */
-public class ArchiverRetrieverTest extends TestCase {
-	protected static boolean thisIsTheFirstRun = true;
 
-	// uri = "activemq:topic:Parameters"
+@ContextConfiguration(locations = { "file:src/main/resources/parameterStorage/simple-parameter-storage.xml" })
+public class SimpleParameterStorageTest extends AbstractJUnit4SpringContextTests {
+	private static boolean thisIsTheFirstRun = true;
+	
+	@Produce(uri = "activemq:topic:Parameters")
 	protected ProducerTemplate archiverProducer = null;
 
-	// uri = "activemq:RetrieverCommands"
+	@Produce(uri = "activemq:RetrieverCommands")
 	protected ProducerTemplate retrieverProducer = null;
 
-	// uri = "mock:Result"
+	@EndpointInject(uri = "mock:Results")
 	protected MockEndpoint result = null;
 
-	// uri = "mock:Failed"
+	@EndpointInject(uri = "mock:FailedCommands")
 	protected MockEndpoint failed = null;
+	
+	@Autowired
+	protected CamelContext storageContext = null;
+	
+	@Autowired
+	protected DataSource database = null;
 	
 	// the test-data
 	protected String parameterName = "test_parameter";
@@ -54,108 +68,82 @@ public class ArchiverRetrieverTest extends TestCase {
 			new Parameter(parameterName, "test description", 1300002000, 22222,	"Java.lang.Int"),
 			new Parameter(parameterName, "test description", 1300003000, 33333,	"Java.lang.Int"),
 			new Parameter(parameterName, "test description", 1300004000, 44444,	"Java.lang.Int") };
-	
-	// retrieverContext needs to be static. The contexts will not get destroyed after each test run,
-	// and all tests run in the same context. 
-	protected static CamelContext retrieverContext = null; 
-	protected CamelContext archiverContext = null;
-
 
 	/** 
 	 * Set up the environment for the test: 
-	 * On the first run only, create both contexts, add all necessary routes and prepare and fill the database.
+	 * On the first run only, add all necessary routes and prepare and fill the database.
 	 * 
-	 * On every run, create the mock endpoints, empty the parameters topic (and the corresponding mock endpoints)
-	 * so that messages in there don't disturb testing, and create a producer template for the retriever.
+	 * On every run, reset the mock endpoints.
 	 * 
 	 * @throws Exception
 	 */
-	public void setUp() throws Exception {
+	@Before
+	public void initialize() throws Exception {
 		if (thisIsTheFirstRun) {
-			//Load contexts
-			ApplicationContext temp;
-
-			temp = new FileSystemXmlApplicationContext("file:src/main/resources/parameterStorage/archiver.xml");
-			archiverContext = (CamelContext) temp.getBean("archiverContext");
-			
-			temp = new FileSystemXmlApplicationContext("file:src/main/resources/parameterStorage/retriever.xml");
-			retrieverContext = (CamelContext) temp.getBean("retrieverContext");
-			
-			archiverContext.start();
-			retrieverContext.start();
-			
 			// Add routes that are necessary to run the tests.
-			retrieverContext.addRoutes(new RouteBuilder() {
+			storageContext.addRoutes(new RouteBuilder() {
 				public void configure() throws Exception {
 					from("activemq:RetrievedParameters").to("mock:Results");
 
 					from("activemq:RetrieverCommandsFailed").to("mock:FailedCommands");
 				}
 			});
+			
+			// In case that there are still old parameters left in the parameters topic,
+			// wait until all have been routed to the 'result' and 'failed' components, 
+			// so that they don't disturb testing.
+			int oldCount = -1;
+			int newCount = 0;
+			
+			while (oldCount < newCount) {
+				Thread.sleep(250);
+				oldCount = newCount;
+				newCount = result.getReceivedCounter() + failed.getReceivedCounter();
+			}		
 		
 			// Prepare database
-			JdbcTemplate jdbcTemplate = new JdbcTemplate((DataSource) temp.getBean("database"));
+			JdbcTemplate jdbcTemplate = new JdbcTemplate(database);
 			
 			jdbcTemplate.execute("DROP TABLE IF EXISTS " + parameterName.toUpperCase() + ";");
 			jdbcTemplate.execute("DROP TABLE IF EXISTS " + parameterName.toLowerCase() + ";");
 			
-			// Store test-parameters in Database
-			archiverProducer = archiverContext.createProducerTemplate();
-			
-			for(Parameter p : testParameters) {
-				archiverProducer.sendBody("activemq:topic:Parameters", p);
+			// Store test-parameters in Database. InOut exchange pattern to make sure that
+			// every parameter has been stored in the database before continuing the test.
+			// Otherwise, the first test could fail.
+
+			Exchange exchange = new DefaultExchange(storageContext, ExchangePattern.InOut);
+
+			for (Parameter p : testParameters) {
+				exchange.getIn().setBody(p);
+				archiverProducer.send("activemq:topic:Parameters", exchange);
 			}
-					
-			//Wait two seconds so that the archiver has time to store the parameters. Otherwise, the first 
-			//test will fail.
-			//TODO implement a nicer solution than 'just wait 2 seconds'
-			Thread.sleep(2000);
 			
 			thisIsTheFirstRun = false;
 		}
-
-		// Prepare access to mock components
-		result = retrieverContext.getEndpoint("mock:Results",MockEndpoint.class);
-		failed = retrieverContext.getEndpoint("mock:FailedCommands", MockEndpoint.class);
-		
-		// In case that there are still old parameters left in the parameters topic,
-		// wait until all have been routed to the 'result' and 'failed' components, 
-		// so that they don't disturb testing.
-		int oldCount = -1;
-		int newCount = 0;
-		
-		while (oldCount < newCount) {
-			Thread.sleep(250);
-			oldCount = newCount;
-			newCount = result.getReceivedCounter() + failed.getReceivedCounter();
-		}		
 		
 		result.reset();
 		failed.reset();
-		
-		// Create producer template for the retriever.
-		retrieverProducer = retrieverContext.createProducerTemplate();
 	}
 
 	/**
 	 * Tests the retrieval of two parameters from the database.
+	 * Uses route id '2' and '3'.
 	 * 
 	 * @throws InterruptedException
 	 */
-	
 	@Test
 	public void testStorageAndRetrievalOfTwoParameters() throws InterruptedException {
-		//Issue retrieve-command
+		// Issue retrieve-command
 		String parametersToBeRetrieved = "test_parameter;1300001500;1300003500";
 
 		retrieverProducer.sendBody("activemq:queue:RetrieverCommands", parametersToBeRetrieved);
 		
-		//Wait max ~8sec until 2 messages have been received.
+		// Wait max ~8sec until 2 messages have been received.
 		for (int i = 4; result.getReceivedCounter() < 2 && i < 8192; i *= 2) {
 			Thread.sleep(i);
 		}
 
-		//Assert that the correct parameters have been retrieved from the database.
+		// Assert that the correct parameters have been retrieved from the database.
 		assertEquals("Wrong number parameters has been restored from database.", 2, result.getReceivedCounter());
 		
 		Map<Long,Parameter> receivedParameters = new HashMap<Long,Parameter>();
@@ -172,22 +160,23 @@ public class ArchiverRetrieverTest extends TestCase {
 
 	/**
 	 * Tests the retrieval of all parameters from the database.
+	 * Uses route id '2' and '3'.
 	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
 	public void testStorageAndRetrievalOfAllParameters() throws InterruptedException {
-		//Issue retrieve-command
+		// Issue retrieve-command
 		String parametersToBeRetrieved = "test_parameter";
 
 		retrieverProducer.sendBody("activemq:queue:RetrieverCommands", parametersToBeRetrieved);
 		
-		//Wait max ~8sec until 4 messages have been received.
+		// Wait max ~8sec until 4 messages have been received.
 		for (int i = 4; result.getReceivedCounter() < 4 && i < 8192; i *= 2) {
 			Thread.sleep(i);
 		}
 
-		//Assert that the correct parameters have been retrieved from the database.
+		// Assert that the correct parameters have been retrieved from the database.
 		assertEquals("Wrong number parameters has been restored from database.", 4, result.getReceivedCounter());
 		
 		Map<Long,Parameter> receivedParameters = new HashMap<Long,Parameter>();
@@ -206,22 +195,23 @@ public class ArchiverRetrieverTest extends TestCase {
 	
 	/**
 	 * Tests whether an exception is thrown (and correctly caught) on a faulty control string.
+	 * Uses route id '2' and '3'.
 	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
 	public void testWrongRetrieverCommand() throws InterruptedException {
-		//Issue retrieve-command
+		// Issue retrieve-command
 		String parametersToBeRetrieved = "very_wrong:4";
 
 		retrieverProducer.sendBody("activemq:queue:RetrieverCommands", parametersToBeRetrieved);
 		
-		//Wait max ~8sec until 1 message has been received.
+		// Wait max ~8sec until 1 message has been received.
 		for (int i = 4; failed.getReceivedCounter() < 1 && i < 8192; i *= 2) {
 			Thread.sleep(i);
 		}
 
-		//Assert that the correct parameters have been retrieved from the database.
+		// Assert that the correct parameters have been retrieved from the database.
 		assertEquals("Error message count is wrong.", 1, failed.getReceivedCounter());
 		assertEquals("From database retrieved parameter count is wrong.", 0, result.getReceivedCounter());
 	}

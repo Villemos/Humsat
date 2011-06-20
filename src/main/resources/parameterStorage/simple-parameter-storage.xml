@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:p="http://www.springframework.org/schema/p" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans 
@@ -12,47 +12,60 @@
        http://camel.apache.org/schema/spring/camel-spring.xsd
        ">
 
-	<!-- ### parameterstorage.simple.RETRIEVER Example ### 
+	<!-- ### parameterstorage.simple. ARCHIVER & RETRIEVER Example ### 
 	
 	This example is fully working and can be used to configure Hummingbird 
 	to your needs. You have to have a postgresql Database running (see the 
 	'database' bean for details.)
-	Instead of activemq:queue:RetrievedParameters you probably would want to
-	use a topic to write your retrieved Parameters to, though...
+	Instead of activemq:queue:Parameters and activemq:queue:RetrievedParameters
+	you probably would want to use a topic, though...
 	-->   
-
+	
 	<context:annotation-config />
 
-	<!-- Set up the database -->
 	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" 
 		p:driverClassName="org.postgresql.Driver"
 		p:url="jdbc:postgresql:hbird" 
 		p:username="hbird" 
 		p:password="hbird" />
 
+	<!-- Set up the archvier bean -->
+	<bean id="archiver" class="org.hbird.business.parameterstorage.simple.Archiver">
+		<constructor-arg index="0" ref="database" />
+	</bean>
+	
 	<!-- Set up the retriever bean -->
 	<bean id="retriever" class="org.hbird.business.parameterstorage.simple.Retriever">
 		<constructor-arg index="0" ref="database" />
-		<constructor-arg index="1" value="vm:RetrievedParameters" />
+		<constructor-arg index="1" value="seda:RetrievedParameters" />
 	</bean>
 
-	<!-- Create camel context -->
-	<camelContext id="retrieverContext" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="storageContext" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer" />
-
 		<onException>
 			<exception>java.io.IOException</exception>
 			<handled><constant>true</constant></handled>
 			<to uri="activemq:queue:RetrieverCommandsFailed" />
 		</onException>
+
+<!-- 		Archiver -->
+		<route id="ps1">
+			<from uri="activemq:topic:Parameters" />
+			<setHeader headerName="name"> <simple>${body.name}</simple> </setHeader>
+			<setHeader headerName="timestamp"> <simple>${body.timestamp}</simple> </setHeader>
+			<marshal ref="xstream" />
+			<to uri="bean:archiver" />
+		</route>
 		
-		<route>
+<!-- 		Retriever -->
+		
+		<route id="ps2">
 			<from uri="activemq:queue:RetrieverCommands" />
 			<to uri="bean:retriever" />
 		</route>
 		
-		<route>
-			<from uri="vm:RetrievedParameters" />
+		<route id="ps3">
+			<from uri="seda:RetrievedParameters" />
 			<unmarshal ref="xstream" />
 			<to uri="activemq:queue:RetrievedParameters" />
 		</route>
