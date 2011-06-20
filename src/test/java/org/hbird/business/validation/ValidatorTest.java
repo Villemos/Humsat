@@ -53,7 +53,7 @@ public class ValidatorTest extends  TestCase {
 		if (thisIsTheFirstRun) {
 			// Load contexts
 			ApplicationContext temp;
-			temp = new FileSystemXmlApplicationContext("file:src/main/resources/parameterValidator/validator.xml");
+			temp = new FileSystemXmlApplicationContext("file:src/main/resources/parameterValidator/parameter-validator.xml");
 			
 			validatorContext = (CamelContext) temp.getBean("validatorContext");
 			validatorContext.start();

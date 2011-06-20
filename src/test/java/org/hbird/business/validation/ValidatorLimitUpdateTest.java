@@ -40,7 +40,6 @@ public class ValidatorLimitUpdateTest extends ValidatorTest {
 		producer.sendBodyAndHeader("activemq:topic:Parameters", invalidParameter, "name", "BATTERY_VOLTAGE");
 		
 		waitForMessagesInMockEndpoints(0, 1, 1, 1);
-		System.out.println(resultsWarning.getReceivedCounter());
 		assertEquals("Warning-state of 9 Volt parameter is incorrect.", 
 			false, 
 			(boolean) resultsWarning.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());

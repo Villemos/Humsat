@@ -20,7 +20,7 @@
 	
 	<bean id="task.executor" class="org.hbird.business.command.task.TaskExecutor"/>
 	
-	<camelContext id="commandReleaserContext" xmlns="http://camel.apache.org/schema/spring"> 
+	<camelContext id="commandingChainContext" xmlns="http://camel.apache.org/schema/spring"> 
 		<template id="producer"/>
 		
 		<!-- Route to receive and release commands. -->		

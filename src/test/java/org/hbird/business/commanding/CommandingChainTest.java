@@ -37,8 +37,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * Commanding-chain integration test.
  * 
  */
-@ContextConfiguration(locations = { "file:src/main/resources/commandingChain/command-releaser.xml" })
-public class CommandReleaserTest extends AbstractJUnit4SpringContextTests {
+@ContextConfiguration(locations = { "file:src/main/resources/commandingChain/commanding-chain.xml" })
+public class CommandingChainTest extends AbstractJUnit4SpringContextTests {
 	@EndpointInject(uri = "mock:ResultsCommands")
 	protected MockEndpoint resultsCommands= null;
 
