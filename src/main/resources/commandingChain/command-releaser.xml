@@ -16,14 +16,15 @@
 	
 	<bean id="header.mapper" class="org.hbird.exchange.utilities.AllFields"/>
 	
-	<bean id="provider" class="org.hbird.business.parameterstorage.InMemoryParameterBuffer"/>
-
-
+	<bean id="parameter.buffer" class="org.hbird.business.parameterstorage.InMemoryParameterBuffer"/>
+	
+	<bean id="task.executor" class="org.hbird.business.command.task.TaskExecutor"/>
+	
 	<camelContext id="commandReleaserContext" xmlns="http://camel.apache.org/schema/spring"> 
 		<template id="producer"/>
 		
-		<!-- Route to receive commands injected from somebody, and release them. -->		
-		<route>
+		<!-- Route to receive and release commands. -->		
+		<route id="cr1" >
 			<from uri="activemq:queue:Commands" />
 			<split>
 			<method bean="command.releaser"></method>
@@ -35,21 +36,22 @@
 	            </when>
 				<when>
 	                <simple>${body} is org.hbird.exchange.commanding.Task</simple>                
-	                <to uri="bean:header.mapper"/>
-					<to uri="activemq:queue:Tasks" />
+					<to uri="bean:task.executor" />
+					<to uri="activemq:queue:ExecutedTasks" />
 	            </when>
 			</choice>
 			</split>
 		</route>
-
-		<route>
-			<from uri="activemq:queue:ParameterRequests" />
-			<to uri="bean:provider?method=getParameterByName"/>
+		
+		<!-- 	Routes to access parameter in-memory buffer -->
+		<route id="cr2" >
+			<from uri="direct:ParameterRequests" />
+			<to uri="bean:parameter.buffer?method=getParameterByName"/>
 		</route>
 		
-		<route>
-			<from uri="direct:Parameters" />
-			<to uri="bean:provider?method=storeParameter"/>			
+		<route id="cr3" >
+			<from uri="activemq:topic:Parameters" />
+			<to uri="bean:parameter.buffer?method=storeParameter"/>			
 		</route>		
 		
 	</camelContext>
