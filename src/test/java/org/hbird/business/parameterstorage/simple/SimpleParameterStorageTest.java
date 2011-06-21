@@ -15,12 +15,10 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.hbird.exchange.type.Parameter;
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +36,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * the retriever throws an exception on a faulty control string and whether this exception is
  * correctly caught.
  */
-
 @ContextConfiguration(locations = { "file:src/main/resources/parameterStorage/simple-parameter-storage.xml" })
 public class SimpleParameterStorageTest extends AbstractJUnit4SpringContextTests {
 	private static boolean thisIsTheFirstRun = true;
@@ -107,16 +104,13 @@ public class SimpleParameterStorageTest extends AbstractJUnit4SpringContextTests
 			jdbcTemplate.execute("DROP TABLE IF EXISTS " + parameterName.toUpperCase() + ";");
 			jdbcTemplate.execute("DROP TABLE IF EXISTS " + parameterName.toLowerCase() + ";");
 			
-			// Store test-parameters in Database. InOut exchange pattern to make sure that
-			// every parameter has been stored in the database before continuing the test.
-			// Otherwise, the first test could fail.
-
-			Exchange exchange = new DefaultExchange(storageContext, ExchangePattern.InOut);
+			// Store test-parameters in Database. Wait a second after sending them to the archiver
+			// so that it has time to store them.
 
 			for (Parameter p : testParameters) {
-				exchange.getIn().setBody(p);
-				archiverProducer.send("activemq:topic:Parameters", exchange);
+				archiverProducer.sendBody(p);
 			}
+			Thread.sleep(1000);
 			
 			thisIsTheFirstRun = false;
 		}
