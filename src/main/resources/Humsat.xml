@@ -17,16 +17,15 @@
 
 
 	<!-- ### Business tier ### -->
-
 	<import resource="classpath:navigation/orbit-predictor-orekit.xml" />
 	<import resource="classpath:commandingChain/command-releaser.xml" />
 	<import resource="classpath:commandingChain/task-executor.xml" />
 	<import resource="classpath:parameterValidator/validator.xml" />
-<!-- 	<import resource="classpath:parameterStorage/archiver.xml" /> --> 	<!-- Needs a database. -->
-<!-- 	<import resource="classpath:parameterStorage/retriever.xml"/> -->	<!-- Needs a database. -->
+	<import resource="classpath:parameterStorage/archiver.xml" /> 	
+	<import resource="classpath:parameterStorage/retriever.xml"/>	
 
 	<import resource="classpath:humsat-logging.xml" /> 
- 	<import resource="classpath:humsat-jsonpublish.xml" /> 
+ 	<import resource="classpath:METADATA/jsonpublish.xml" /> 
 	<import resource="classpath:METADATA/publisher.xml" />
 
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">

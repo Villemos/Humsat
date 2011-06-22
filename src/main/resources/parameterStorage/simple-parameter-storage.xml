@@ -23,13 +23,19 @@
 	
 	<context:annotation-config />
 
-	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" 
-		p:driverClassName="org.postgresql.Driver"
-		p:url="jdbc:postgresql:hbird" 
-		p:username="hbird" 
-		p:password="hbird" />
+<!-- 	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"  -->
+<!-- 		p:driverClassName="org.postgresql.Driver" -->
+<!-- 		p:url="jdbc:postgresql:hbird"  -->
+<!-- 		p:username="hbird"  -->
+<!-- 		p:password="hbird" /> -->
 
-	<!-- Set up the archvier bean -->
+	<bean id="database" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" 
+		p:driverClassName="org.h2.Driver"
+		p:url="jdbc:h2:parameter-storage" 
+		p:username="hbird" 
+		p:password="" />
+
+	<!-- Set up the archiver bean -->
 	<bean id="archiver" class="org.hbird.business.parameterstorage.simple.Archiver">
 		<constructor-arg index="0" ref="database" />
 	</bean>
