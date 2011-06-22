@@ -12,21 +12,18 @@
 	<context:annotation-config />
 
 	<!-- ### TM data supplier ("transport tier")### -->
-<!-- 	<import resource="classpath:transportTier/ccsds-decoder.xml" /> -->
-		<import resource="classpath:parameterSimulator/simulator.xml" />
+	<import resource="classpath:transportTier/ccsds-decoder.xml" />
+<!-- 		<import resource="classpath:parameterSimulator/parameter-simulator.xml" /> -->
 
 
 	<!-- ### Business tier ### -->
 	<import resource="classpath:navigation/orbit-predictor-orekit.xml" />
-	<import resource="classpath:commandingChain/command-releaser.xml" />
-	<import resource="classpath:commandingChain/task-executor.xml" />
-	<import resource="classpath:parameterValidator/validator.xml" />
-	<import resource="classpath:parameterStorage/archiver.xml" /> 	
-	<import resource="classpath:parameterStorage/retriever.xml"/>	
-
+	<import resource="classpath:commandingChain/commanding-chain.xml" />
+	<import resource="classpath:parameterValidator/parameter-validator.xml" />
+	<import resource="classpath:parameterStorage/simple-parameter-storage.xml" /> 	
 	<import resource="classpath:humsat-logging.xml" /> 
- 	<import resource="classpath:METADATA/jsonpublish.xml" /> 
-	<import resource="classpath:METADATA/publisher.xml" />
+ 	<import resource="classpath:publishing/jsonpublish.xml" /> 
+	<import resource="classpath:publishing/publisher.xml" />
 
 	<camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
 		<template id="producer" />

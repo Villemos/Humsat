@@ -40,8 +40,6 @@
 			<from uri="timer://prediction?fixedRate=true&amp;period=5000" />
 			<to uri="bean:scheduler?method=createPredictionRequest"/>
 			<to uri="bean:predictor"/>
-<!-- 			<marshal ref="xstream" /> -->
-<!-- 			<to uri="stream:out" /> -->
 		</route>
 		
 		<!-- Publish the predicted orbit on an activemq topic -->
