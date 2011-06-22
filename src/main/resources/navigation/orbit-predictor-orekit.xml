@@ -9,54 +9,73 @@
        http://camel.apache.org/schema/spring 
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<context:annotation-config/>
+	<context:annotation-config />
 
 	<import resource="classpath:METADATA/locations.xml" />
 	<import resource="classpath:METADATA/satellite.xml" />
 
-	<!-- The beans required to simulate the satellite orbit.  -->
-	<bean id="orbit.predictor.predicted" class="org.hbird.business.navigation.OrbitPredictor">
-		<constructor-arg index="0" value="src/main/webapp/WEB-INF"/>
+	<!-- The beans required to simulate the satellite orbit. -->
+	<bean id="predictor" class="org.hbird.business.navigation.OrbitPredictor">
+		<constructor-arg index="0" value="src/main/webapp/WEB-INF" />
 	</bean>
-	
+
 	<!-- Satellite satellite, OrbitalState state, List<Location> locations -->
-	<bean id="orbit.scheduler.predicted" class="org.hbird.exchange.navigation.OrbitalStateScheduler">
-		<constructor-arg index="0" value="Predicted"/>
-		<constructor-arg index="1" ref="satellite"/>
-		<constructor-arg index="2"><null/></constructor-arg>
+	<bean id="scheduler" class="org.hbird.exchange.navigation.OrbitalStateScheduler">
+		<constructor-arg index="0" value="Predicted" />
+		<constructor-arg index="1" ref="satellite" />
+		<constructor-arg index="2"> <null /> </constructor-arg>
 		<constructor-arg index="3">
 			<list>
-				<ref bean="location.darmstadt"/>
-				<ref bean="location.newdelhi"/>
-				<ref bean="location.houston"/>
+				<ref bean="location.darmstadt" />
+				<ref bean="location.newdelhi" />
+				<ref bean="location.houston" />
 			</list>
 		</constructor-arg>
 	</bean>
-	
-	
+
 	<camelContext id="orbitPredictorContext" xmlns="http://camel.apache.org/schema/spring">
 
+		<!-- Perform an orbit prediction every 10 seconds -->
 		<route>
-			<from uri="activemq:queue:OrbitalPredictionRequests" />
-			<to uri="bean:orbit.predictor.predicted"/>
+			<from uri="timer://prediction?fixedRate=true&amp;period=5000" />
+			<to uri="bean:scheduler?method=createPredictionRequest"/>
+			<to uri="bean:predictor"/>
+<!-- 			<marshal ref="xstream" /> -->
+<!-- 			<to uri="stream:out" /> -->
+		</route>
+		
+		<!-- Publish the predicted orbit on an activemq topic -->
+		<route>
+			<from uri="seda:OrbitPredictions" />
+			<to uri="activemq:topic:OrbitPredictions" />
 		</route>
 
+		<!-- Update location/velocity/orbitalState in scheduler -->
 		<route>
-			<from uri="timer://prediction?fixedRate=true&amp;period=60000" />
-			<to uri="bean:orbit.scheduler.predicted?method=process"/>
-			<to uri="bean:orbit.predictor.predicted"/>
+			<from uri="activemq:topic:NavigationComponentConfiguration?selector=name='ORBITAL_STATE'" />
+			<to uri="bean:scheduler?method=setOrbitalState" />
 		</route>
 		
 		<route>
-			<from uri="activemq:topic:LocationDefinitions"/>
-			<to uri="bean:orbit.scheduler.predicted?method=processLocation"/>
+			<from uri="activemq:topic:NavigationComponentConfiguration?selector=name='PREDICTION_INTERVAL'" />
+			<to uri="bean:scheduler?method=setPredictionInterval" />
 		</route>
 		
 		<route>
-			<from uri="activemq:topic:OrbitalPredictions"/>
-			<to uri="bean:orbit.scheduler.predicted?method=processOrbitalState"/>
+			<from uri="activemq:topic:NavigationComponentConfiguration?selector=name='LOCATION'" />
+			<to uri="bean:scheduler?method=addLocation" />
 		</route>
-
+		
+		<route>
+			<from uri="activemq:topic:NavigationComponentConfiguration?selector=name='DELTA_PROPAGATION'" />
+			<to uri="bean:scheduler?method=setDeltaPropagation" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:NavigationComponentConfiguration?selector=name='STEP_SIZE'" />
+			<to uri="bean:scheduler?method=setStepSize" />
+		</route>
+	
 	</camelContext>
 
 </beans>
