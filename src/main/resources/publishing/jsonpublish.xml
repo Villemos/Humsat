@@ -11,7 +11,7 @@
 
 	<context:annotation-config/>
 
-	<camelContext id="jsonPublishRoutes" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="jsonPublisher" xmlns="http://camel.apache.org/schema/spring">
 
 		<dataFormats>
             <!-- here we define a Json data format with the id jack and that it should use the TestPojo as the class type when
