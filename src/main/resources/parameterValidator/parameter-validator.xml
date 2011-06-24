@@ -10,6 +10,12 @@
        http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 	<context:annotation-config/>
+
+	<bean id="elevation.warning" class="org.hbird.business.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="Low elevation warning"/>
+		<constructor-arg index="1" value=""/>
+		<constructor-arg index="2" value="30000"/>
+	</bean>
 	
 	<bean id="cpu.temperature.warning" class="org.hbird.business.validation.parameter.UpperLimit">
 		<constructor-arg index="0" value="High cpu temperature warning"/>
@@ -35,33 +41,28 @@
 		<constructor-arg index="2" value="6"/>
 	</bean>
 
-	<bean id="state.of.video.stream.error" class="org.hbird.business.validation.parameter.LowerLimit">
-		<constructor-arg index="0" value="No video stream error"/>
+	<bean id="state.of.video.stream.error" class="org.hbird.business.validation.parameter.UpperLimit">
+		<constructor-arg index="0" value="Activated video stream error"/>
 		<constructor-arg index="1" value=""/>
 		<constructor-arg index="2" value="0.5"/>
 	</bean>
 
-	<bean id="state.of.payload.error" class="org.hbird.business.validation.parameter.LowerLimit">
-		<constructor-arg index="0" value="Disabled payload error"/>
+	<bean id="state.of.video.deployment.error" class="org.hbird.business.validation.parameter.UpperLimit">
+		<constructor-arg index="0" value="Deployed payload error"/>
 		<constructor-arg index="1" value=""/>
 		<constructor-arg index="2" value="0.5"/>
-	</bean>
-
-	<bean id="state.of.payload.deployment.error" class="org.hbird.business.validation.parameter.LowerLimit">
-		<constructor-arg index="0" value="No payload deployed error"/>
-		<constructor-arg index="1" value=""/>
-		<constructor-arg index="2" value="0.5"/>
-	</bean>
-	
-	<bean id="elevation.warning" class="org.hbird.business.validation.parameter.LowerLimit">
-		<constructor-arg index="0" value="Low elevation warning"/>
-		<constructor-arg index="1" value=""/>
-		<constructor-arg index="2" value="30000"/>
 	</bean>
 
 	<camelContext id="validatorContext" xmlns="http://camel.apache.org/schema/spring">
 
 <!-- Routes for validating -->
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='ELEVATION'" />
+			<to uri="bean:elevation.warning?method=processParameter" />
+			<to uri="activemq:topic:ParametersError" />
+		</route>
+
 		<route>
 			<from uri="activemq:topic:Parameters?selector=name='CPU_TEMPERATURE'" />
 			<to uri="bean:cpu.temperature.warning?method=processParameter" />
@@ -93,20 +94,8 @@
 		</route>
 
 		<route>
-			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_PAYLOAD'" />
-			<to uri="bean:state.of.payload.error?method=processParameter" />
-			<to uri="activemq:topic:ParametersError" />
-		</route>
-
-		<route>
-			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_PAYLOAD_DEPLOYMENT'" />
-			<to uri="bean:state.of.payload.deployment.error?method=processParameter" />
-			<to uri="activemq:topic:ParametersError" />
-		</route>
-		
-		<route>
-			<from uri="activemq:topic:Parameters?selector=name='ELEVATION'" />
-			<to uri="bean:elevation.warning?method=processParameter" />
+			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_VIDEO_DEPLOYMENT'" />
+			<to uri="bean:state.of.video.deployment.error?method=processParameter" />
 			<to uri="activemq:topic:ParametersError" />
 		</route>
 		
@@ -124,14 +113,8 @@
 		</route>
 
 		<route>
-			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_PAYLOAD_SWITCH'" />
-			<to uri="bean:state.of.payload.error?method=processEnabled" />
-			<to uri="activemq:topic:ParametersSwitch" />
-		</route>
-
-		<route>
-			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_PAYLOAD_DEPLOYMENT_SWITCH'" />
-			<to uri="bean:state.of.payload.deployment.error?method=processEnabled" />
+			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_VIDEO_DEPLOYMENT_SWITCH'" />
+			<to uri="bean:state.of.video.deployment.error?method=processEnabled" />
 			<to uri="activemq:topic:ParametersSwitch" />
 		</route>
 		

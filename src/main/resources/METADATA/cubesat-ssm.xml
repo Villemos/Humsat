@@ -17,21 +17,22 @@
 			<IntegerParameterType name="16bitUInteger" sizeInBits="16" signed="false">
 				<UnitSet />
 			</IntegerParameterType>
-			
-			<IntegerParameterType name="16bitInteger" sizeInBits="16" signed="true">
-				<UnitSet />
-			</IntegerParameterType>
 
 			<IntegerParameterType name="32bitUInteger" sizeInBits="32" signed="false">
 				<UnitSet />
 			</IntegerParameterType>
+			
+			<IntegerParameterType name="64bitInteger" sizeInBits="64">
+				<UnitSet /> <!--  long -->
+			</IntegerParameterType>
+			
 
 			<FloatParameterType name="32bitFloat" sizeInBits="32">
-				<UnitSet />
+				<UnitSet />  <!--  float -->
 			</FloatParameterType>
 
 			<FloatParameterType name="64bitFloat" sizeInBits="64" >
-				<UnitSet />
+				<UnitSet />  <!-- double -->
 			</FloatParameterType>
 		</ParameterTypeSet>
 
@@ -41,17 +42,19 @@
 			<Parameter parameterTypeRef="16bitUInteger" name="PACKET_LENGTH" />
 
 			<Parameter parameterTypeRef="64bitFloat" name="ELEVATION" />
-			<Parameter parameterTypeRef="16bitInteger" name="LONGITUDE"/>
-			<Parameter parameterTypeRef="16bitInteger" name="LATITUDE"/>
-
+			<Parameter parameterTypeRef="64bitFloat" name="LATITUDE"/>
+			<Parameter parameterTypeRef="64bitFloat" name="LONGITUDE"/>
+			
+			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_MAIN_SWITCH" />
+			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_TRANSMITTER" />
+			<Parameter parameterTypeRef="32bitUInteger" name="DEPLOYMENT_TIME" />
 			<Parameter parameterTypeRef="32bitUInteger" name="ONBOARD_TIME" />
-			<Parameter parameterTypeRef="64bitFloat" name="CPU_TEMPERATURE" />
 			<Parameter parameterTypeRef="64bitFloat" name="BATTERY_VOLTAGE" />
+			<Parameter parameterTypeRef="64bitFloat" name="CPU_TEMPERATURE" />
 
 			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_VIDEO_STREAM" />
-			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_PAYLOAD" />
+			<Parameter parameterTypeRef="1bitBoolean" name="STATE_OF_VIDEO_DEPLOYMENT" />
 		</ParameterSet>
-
 
 		<ContainerSet>
 			<SequenceContainer name="TMPacket" shortDescription="CCSDS TM Packet">
@@ -79,8 +82,8 @@
 				
 				<EntryList>
 					<ParameterRefEntry parameterRef="ELEVATION" />
-					<ParameterRefEntry parameterRef="LONGITUDE" />
 					<ParameterRefEntry parameterRef="LATITUDE" />
+					<ParameterRefEntry parameterRef="LONGITUDE" />
 				</EntryList>
 			</SequenceContainer>
 
@@ -98,6 +101,9 @@
 					<ParameterRefEntry parameterRef="ONBOARD_TIME" />
 					<ParameterRefEntry parameterRef="CPU_TEMPERATURE" />
 					<ParameterRefEntry parameterRef="BATTERY_VOLTAGE" />
+					<ParameterRefEntry parameterRef="DEPLOYMENT_TIME" />
+					<ParameterRefEntry parameterRef="STATE_OF_TRANSMITTER" />
+					<ParameterRefEntry parameterRef="STATE_OF_MAIN_SWITCH" />
 				</EntryList>
 			</SequenceContainer>
 
@@ -113,7 +119,7 @@
 				
 				<EntryList>
 					<ParameterRefEntry parameterRef="STATE_OF_VIDEO_STREAM" />
-					<ParameterRefEntry parameterRef="STATE_OF_PAYLOAD" />
+					<ParameterRefEntry parameterRef="STATE_OF_VIDEO_DEPLOYMENT" />
 				</EntryList>
 			</SequenceContainer>
 			
