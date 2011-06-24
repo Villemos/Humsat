@@ -13,7 +13,7 @@
        ">
  
  	<bean id="cubesatXtceModelFactory" class="org.hbird.transport.xtce.XtceModelFactory">
-		<constructor-arg value="src/main/resources/transportTier/cubesat-ssm.xml"></constructor-arg>
+		<constructor-arg value="src/main/resources/METADATA/cubesat-ssm.xml"></constructor-arg>
 	</bean>
 	
 	<bean id="bitsetConverter" class="org.hbird.transport.commons.util.typeconverters.ToBitSetConverter" />
