@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans 
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -11,34 +10,43 @@
        http://camel.apache.org/schema/spring 
        http://camel.apache.org/schema/spring/camel-spring.xsd
        ">
- 
- 	<bean id="cubesatXtceModelFactory" class="org.hbird.transport.xtce.XtceModelFactory">
+
+	<bean id="cubesatXtceModelFactory" class="org.hbird.transport.xtce.XtceModelFactory">
 		<constructor-arg value="src/main/resources/METADATA/cubesat-ssm.xml"></constructor-arg>
 	</bean>
-	
-	<bean id="bitsetConverter" class="org.hbird.transport.commons.util.typeconverters.ToBitSetConverter" />
 
-	<bean id="packetBroker" class="org.hbird.transport.packetbroker.HummingbirdCamelPacketBrokerParameterOutput">
+	<bean id="bitsetConverter"
+		class="org.hbird.transport.commons.util.typeconverters.ToBitSetConverter" />
+
+	<bean id="packetBroker"
+		class="org.hbird.transport.packetbroker.HummingbirdCamelPacketBrokerParameterOutput">
 		<constructor-arg ref="cubesatXtceModelFactory"></constructor-arg>
 	</bean>
-	
-	<bean id="frameDecoder" class="org.hbird.transport.protocols.ccsds.transferframe.CcsdsFrameDecoder">
+
+	<bean id="frameDecoder"
+		class="org.hbird.transport.protocols.ccsds.transferframe.CcsdsFrameDecoder">
 		<constructor-arg value="256"></constructor-arg>
 		<constructor-arg value="false"></constructor-arg>
 		<constructor-arg value="false"></constructor-arg>
 	</bean>
 
+	<bean id="frameEncoder"
+		class="org.hbird.transport.protocols.ccsds.transferframe.encoder.CcsdsFrameEncoder">
+		<constructor-arg value="256"></constructor-arg>
+	</bean>
+
 	<camelContext id="ccsdsDecoderContext" xmlns="http://camel.apache.org/schema/spring">
 
 		<route>
-<!-- 			Grab the packets from the message queue -->
+			<!-- Grab the packets from the message queue -->
 			<from uri="activemq:frames" />
-			
-<!-- 			Decode frames... -->
+
+			<!-- Decode frames... -->
 			<to uri="bean:frameDecoder" />
-			
-<!-- 			convert the Strings to bitsets for the packet broker. How to use your own type converter? -->
-<!-- 			<convertBodyTo type="java.util.BitSet" />  -->
+
+			<!-- convert the Strings to bitsets for the packet broker. How to use 
+				your own type converter? -->
+			<!-- <convertBodyTo type="java.util.BitSet" /> -->
 			<to uri="bean:bitsetConverter" />
 
 			<split>
@@ -51,15 +59,27 @@
 					<when>
 						<simple>${header.type} == TMParameter</simple>
 						<filter>
-    				        <simple>${header.name} != 'CUBESAT_APID' and ${header.name} != 'PACKET_LENGTH'</simple>
-	            			<to uri="activemq:topic:Parameters"></to>
-        				</filter>
+							<simple>${header.name} != 'CUBESAT_APID' and ${header.name} !=
+								'PACKET_LENGTH'</simple>
+							<to uri="activemq:topic:Parameters"></to>
+						</filter>
 					</when>
 				</choice>
 			</split>
+		</route>
+
+		<route>
+			<!-- Grab the packets from the message queue -->
+			<from uri="activemq:releasedCommands" />
+			<to uri="bean:packetBroker" />
+			<!-- Encode frames... -->
+			<to uri="bean:frameEncoder" />
+			<!-- convert the Strings to bitsets for the packet broker. How to use 
+				your own type converter? -->
+			<to uri="bean:bitsetConverter" />
 
 		</route>
-		
-	</camelContext>	
+
+	</camelContext>
 
 </beans>
