@@ -41,8 +41,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
- * Tests the configuration of the orbit prediction scheduler and whether the prediction works.
- *
+ * Tests the configuration of the orbit prediction scheduler and whether the
+ * prediction works.
+ * 
  */
 @ContextConfiguration(locations = { "file:src/main/resources/navigation/orbit-predictor-orekit.xml" })
 public class OrbitPredictionTest extends AbstractJUnit4SpringContextTests {
@@ -52,13 +53,12 @@ public class OrbitPredictionTest extends AbstractJUnit4SpringContextTests {
 
 	@Produce(uri = "activemq:topic:NavigationComponentConfiguration")
 	protected ProducerTemplate updateConfiguration;
-		
+
 	@EndpointInject(uri = "mock:OrbitPredictions")
 	protected MockEndpoint orbitPredictions;
 
 	@Autowired
 	protected CamelContext orbitPredictorContext;
-
 
 	@Before
 	public void initialize() throws Exception {
@@ -68,16 +68,15 @@ public class OrbitPredictionTest extends AbstractJUnit4SpringContextTests {
 			}
 		});
 	}
-	
+
 	@Test
 	public void testOrbitPrediction() throws InterruptedException {
 		Exchange exchange;
-		Location groundStation = new Location("Donzdorf", "Another ground station in Germany", 
-				new D3Vector("Position", "The position", 48.69096, 9.84375, 0.));
+		Location groundStation = new Location("Donzdorf", "Another ground station in Germany", new D3Vector("Position",
+				"The position", 48.69096, 9.84375, 0.));
 		D3Vector position = new D3Vector("", "", -6142438.668, 3492467.560, -25767.25680);
 		D3Vector velocity = new D3Vector("", "", 505.8479685, 942.7809215, 7435.922231);
 
-		
 		// Configure OrbitPredictionScheduler.
 		exchange = new DefaultExchange(orbitPredictorContext);
 		exchange.getIn().setBody(60);
@@ -110,8 +109,8 @@ public class OrbitPredictionTest extends AbstractJUnit4SpringContextTests {
 		exchange.getIn().setHeader("name", "ORBITAL_STATE");
 		updateConfiguration.send(exchange);
 
-		assertEquals("Number of messages in orbit predictions topic (before the actual prediction) is wrong. ", 
-				0, orbitPredictions.getReceivedCounter());
+		assertEquals("Number of messages in orbit predictions topic (before the actual prediction) is wrong. ", 0,
+				orbitPredictions.getReceivedCounter());
 
 		// wait...
 		waitUntilPredictionIsDone(0);
@@ -130,28 +129,20 @@ public class OrbitPredictionTest extends AbstractJUnit4SpringContextTests {
 						+ ". Only OrbitalState and LocationContactEvent is allowed.");
 			}
 		}
-		
-//		System.out.println("\nop: " + orbitalStates.size() + " \t " + "lce: " + locationContactEvents.size());
-		
-//		for(LocationContactEvent l : locationContactEvents) {
-//			System.out.println(l.location.getPosition().p1.getValue() + " \t " + l.location.getPosition().p2.getValue() + " \t " + l.location.getPosition().p3.getValue());
-//		}
 
-//		System.out.println("\n\n");
-//		assertEquals("Number of predicted LocationContactEvents is incorrect.", 6, locationContactEvents.size());
 		assertEquals("Number of predicted OrbitalStates is incorrect.", 145, orbitalStates.size());
-		
-//		for(OrbitalState o : orbitalStates) {
-//			System.out.println(o.position.p1.getValue() + " \t " 
-//					+ o.position.p2.getValue() + " \t " 
-//					+ o.position.p3.getValue() + " \t " 
-//					+ o.getTimestamp());
-//		}
+
+		// for(OrbitalState o : orbitalStates) {
+		// System.out.println(o.position.p1.getValue() + " \t "
+		// + o.position.p2.getValue() + " \t "
+		// + o.position.p3.getValue() + " \t "
+		// + o.getTimestamp());
+		// }
 	}
-	
-	
+
 	/**
 	 * Wait until prediction is done and no more messages are received
+	 * 
 	 * @throws InterruptedException
 	 */
 	public void waitUntilPredictionIsDone(int startMessageCounter) throws InterruptedException {
@@ -162,7 +153,7 @@ public class OrbitPredictionTest extends AbstractJUnit4SpringContextTests {
 
 		// Wait max ~16sec until no more messages are received.
 		int oldCount = -1;
-		int newCount = 0;		
+		int newCount = 0;
 
 		for (int i = 4; oldCount < newCount && i < 32768; i *= 2) {
 			Thread.sleep(250);
@@ -171,7 +162,7 @@ public class OrbitPredictionTest extends AbstractJUnit4SpringContextTests {
 
 			Thread.sleep(i);
 		}
-		
+
 		Thread.sleep(500);
 	}
 }

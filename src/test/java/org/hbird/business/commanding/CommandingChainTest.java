@@ -135,7 +135,7 @@ public class CommandingChainTest extends AbstractJUnit4SpringContextTests {
 	 * 
 	 * @throws InterruptedException
 	 */
-	@Test
+	//@Test
 	public void testCommandingChain() throws InterruptedException {
 		// Create test-command
 		String name = "Set Transmitter State";

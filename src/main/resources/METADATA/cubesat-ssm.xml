@@ -99,9 +99,9 @@
 				
 				<EntryList>
 					<ParameterRefEntry parameterRef="ONBOARD_TIME" />
+					<ParameterRefEntry parameterRef="DEPLOYMENT_TIME" />
 					<ParameterRefEntry parameterRef="CPU_TEMPERATURE" />
 					<ParameterRefEntry parameterRef="BATTERY_VOLTAGE" />
-					<ParameterRefEntry parameterRef="DEPLOYMENT_TIME" />
 					<ParameterRefEntry parameterRef="STATE_OF_TRANSMITTER" />
 					<ParameterRefEntry parameterRef="STATE_OF_MAIN_SWITCH" />
 				</EntryList>

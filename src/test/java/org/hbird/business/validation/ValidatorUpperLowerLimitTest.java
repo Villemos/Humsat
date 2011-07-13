@@ -43,11 +43,22 @@ public class ValidatorUpperLowerLimitTest extends  ValidatorTest {
 		// The array used for testing represents the parameters in the ValidatorTest constructor 
 		ArrayList<Object[]> parameters = new ArrayList<Object[]>();
 		parameters.add(new Object[] { 0, 1, 1, 1, true, true, "CPU_TEMPERATURE", 30});
-		parameters.add(new Object[] { 0, 1, 1, 1, false, true, "CPU_TEMPERATURE", 50});
-		parameters.add(new Object[] { 0, 1, 1, 1, false, false, "CPU_TEMPERATURE", 70});
+		parameters.add(new Object[] { 0, 1, 1, 1, false, true, "CPU_TEMPERATURE", 65});
+		parameters.add(new Object[] { 0, 1, 1, 1, false, false, "CPU_TEMPERATURE", 90});
 		parameters.add(new Object[] { 0, 1, 1, 1, true, true, "BATTERY_VOLTAGE", 12});
-		parameters.add(new Object[] { 0, 1, 1, 1, false, true, "BATTERY_VOLTAGE", 8});
-		parameters.add(new Object[] { 0, 1, 1, 1, false, false, "BATTERY_VOLTAGE", 4});
+		parameters.add(new Object[] { 0, 1, 1, 1, false, true, "BATTERY_VOLTAGE", 10});
+		parameters.add(new Object[] { 0, 1, 1, 1, false, false, "BATTERY_VOLTAGE", 8});
+		parameters.add(new Object[] { 0, 1, 1, 1, true, true, "ELEVATION", 500000});
+		parameters.add(new Object[] { 0, 1, 1, 1, false, true, "ELEVATION", 310000});
+		parameters.add(new Object[] { 0, 1, 1, 1, false, false, "ELEVATION", 290000});
+		parameters.add(new Object[] { 0, 0, 1, 1, true, true, "STATE_OF_VIDEO_STREAM", 0});
+		parameters.add(new Object[] { 0, 0, 1, 1, false, false, "STATE_OF_VIDEO_STREAM", 1});
+		parameters.add(new Object[] { 0, 0, 1, 1, true, true, "STATE_OF_VIDEO_DEPLOYMENT", 0});
+		parameters.add(new Object[] { 0, 0, 1, 1, false, false, "STATE_OF_VIDEO_DEPLOYMENT", 1});
+		parameters.add(new Object[] { 0, 0, 1, 1, true, true, "STATE_OF_MAIN_SWITCH", 1});
+		parameters.add(new Object[] { 0, 0, 1, 1, false, false, "STATE_OF_MAIN_SWITCH", 0});
+		parameters.add(new Object[] { 0, 0, 1, 1, true, true, "STATE_OF_TRANSMITTER", 1});
+		parameters.add(new Object[] { 0, 0, 1, 1, false, false, "STATE_OF_TRANSMITTER", 0});
 		
 		return parameters;
 	}
@@ -109,9 +120,11 @@ public class ValidatorUpperLowerLimitTest extends  ValidatorTest {
 				resultsParameters.getReceivedCounter());
 
 		//Validate conditions: correct content of received messages
+		if(expectedWarning > 0)
 		assertEquals(nameOfTest + "'warning' state-parameter has a false state.",
 				warningState, 
 				(boolean) resultsWarning.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
+		if(expectedError > 0)
 		assertEquals(nameOfTest + "'error' state-parameter has a false state.",
 				errorState,
 				(boolean) resultsError.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());

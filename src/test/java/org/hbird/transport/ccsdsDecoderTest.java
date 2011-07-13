@@ -95,7 +95,7 @@ public class ccsdsDecoderTest extends AbstractJUnit4SpringContextTests {
 		// but to generate the values needed for the integration test. 
 		// The simulator's output will then be 'decoded' via Humsat's transport
 		// tier.
-		XtceModelFactory factory = new XtceModelFactory("src/main/resources/transportTier/cubesat-ssm.xml");
+		XtceModelFactory factory = new XtceModelFactory("src/main/resources/METADATA/cubesat-ssm.xml");
 		simulator = new SimulatorSSM(factory, "TMPacket");
 
 		// The producer was not situated in a camel context during instantiation, 
@@ -125,9 +125,9 @@ public class ccsdsDecoderTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testPositionPacket() throws InterruptedException {
-		double elevation = 20;
-		int longitude = 40;
-		int latitude = 60;
+		double elevation = 20d;
+		double longitude = 40d;
+		double latitude = 60d;
 		
 		// 'Simulate' a packet with the cubesat's position. 
 		Map<String, Waveform> test = new HashMap<String, Waveform>();
@@ -179,7 +179,7 @@ public class ccsdsDecoderTest extends AbstractJUnit4SpringContextTests {
 		test.put("PACKET_LENGTH", new FlatWaveform(2));
 		test.put("STATE_OF_VIDEO_STREAM", new FlatWaveform(
 				stateOfVideoStream == true ? 1 : 0));
-		test.put("STATE_OF_PAYLOAD", new FlatWaveform(
+		test.put("STATE_OF_VIDEO_DEPLOYMENT", new FlatWaveform(
 				stateOfPayload == true ? 1 : 0));
 
 		simulator.setWaveformMap(test);
@@ -202,8 +202,8 @@ public class ccsdsDecoderTest extends AbstractJUnit4SpringContextTests {
 		// Assert correctness of the received parameters.
 		assertTrue("No STATE_OF_VIDEO_STREAM Parameter has been received.", receivedTelemetry.containsKey("STATE_OF_VIDEO_STREAM"));
 		assertEquals("STATE_OF_VIDEO_STREAM parameter has wrong value.", stateOfVideoStream == true ? 1 : 0, receivedTelemetry.get("STATE_OF_VIDEO_STREAM").getValue());
-		assertTrue("No STATE_OF_PAYLOAD Parameter has been received.", receivedTelemetry.containsKey("STATE_OF_PAYLOAD"));
-		assertEquals("STATE_OF_PAYLOAD parameter has wrong value.", stateOfPayload == true ? 1 : 0, receivedTelemetry.get("STATE_OF_PAYLOAD").getValue());
+		assertTrue("No STATE_OF_VIDEO_DEPLOYMENT Parameter has been received.", receivedTelemetry.containsKey("STATE_OF_VIDEO_DEPLOYMENT"));
+		assertEquals("STATE_OF_VIDEO_DEPLOYMENT parameter has wrong value.", stateOfPayload == true ? 1 : 0, receivedTelemetry.get("STATE_OF_VIDEO_DEPLOYMENT").getValue());
 	}
 	
 	/**
@@ -229,11 +229,11 @@ public class ccsdsDecoderTest extends AbstractJUnit4SpringContextTests {
 		simulator.generateMessage();
 		
 		//Wait max ~8sec until 3 messages have been received.
-		for (int i = 4; results.getReceivedCounter() < 3 && i < 8192; i *= 2) {
+		for (int i = 4; results.getReceivedCounter() < 6 && i < 8192; i *= 2) {
 			Thread.sleep(i);
 		}
 		
-		assertEquals("Received wrong number of messages.", 3, results.getReceivedCounter());
+		assertEquals("Received wrong number of messages.", 6, results.getReceivedCounter());
 
 		// Put the received parameters into a map since the order in which they
 		// were received could differ.

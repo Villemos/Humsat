@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans 
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -20,6 +22,9 @@
 	
 	<bean id="task.executor" class="org.hbird.business.command.task.TaskExecutor"/>
 	
+<!-- 	<bean id="delayer" class="org.hbird.exchange.utilities.FieldBasedScheduler" -->
+<!-- 		p:fieldName="releaseTime" /> -->
+	
 	<camelContext id="commandingChainContext" xmlns="http://camel.apache.org/schema/spring"> 
 		<template id="producer"/>
 		
@@ -31,16 +36,27 @@
 			<choice>
 	            <when>
 	                <simple>${body} is org.hbird.exchange.commanding.Command</simple>                
-	                <to uri="bean:header.mapper"/>
-					<to uri="activemq:queue:ReleasedCommands" />
+	                <to uri="bean:header.mapper" />
+<!-- 	                <to uri="bean:delayer" /> -->
+					<to uri="activemq:queue:ScheduledCommands" />
 	            </when>
 				<when>
-	                <simple>${body} is org.hbird.exchange.commanding.Task</simple>                
-					<to uri="bean:task.executor" />
-					<to uri="activemq:queue:ExecutedTasks" />
+	                <simple>${body} is org.hbird.exchange.commanding.Task</simple>
+					<to uri="activemq:queue:ScheduledTasks" />
 	            </when>
 			</choice>
 			</split>
+		</route>
+		
+		<route>
+		 	<to uri="activemq:queue:ScheduledCommands" />
+		 	<to uri="activemq:queue:ReleasedCommands" />
+		</route>
+		
+		<route>
+			<from uri="activemq:queue:ScheduledTasks" />
+			<to uri="bean:task.executor" />
+			<to uri="activemq:queue:ExecutedTasks" />
 		</route>
 		
 		<!-- 	Routes to access parameter in-memory buffer -->

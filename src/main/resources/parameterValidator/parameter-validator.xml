@@ -14,31 +14,37 @@
 	<bean id="elevation.warning" class="org.hbird.business.validation.parameter.LowerLimit">
 		<constructor-arg index="0" value="Low elevation warning"/>
 		<constructor-arg index="1" value=""/>
-		<constructor-arg index="2" value="30000"/>
+		<constructor-arg index="2" value="320000"/>
+	</bean>
+	
+	<bean id="elevation.error" class="org.hbird.business.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="Low elevation warning"/>
+		<constructor-arg index="1" value=""/>
+		<constructor-arg index="2" value="300000"/>
 	</bean>
 	
 	<bean id="cpu.temperature.warning" class="org.hbird.business.validation.parameter.UpperLimit">
 		<constructor-arg index="0" value="High cpu temperature warning"/>
 		<constructor-arg index="1" value=""/>
-		<constructor-arg index="2" value="40"/>
+		<constructor-arg index="2" value="60"/>
 	</bean>
 
 	<bean id="cpu.temperature.error" class="org.hbird.business.validation.parameter.UpperLimit">
 		<constructor-arg index="0" value="High cpu temperature error"/>
 		<constructor-arg index="1" value=""/>
-		<constructor-arg index="2" value="60"/>
+		<constructor-arg index="2" value="85"/>
 	</bean>
 	
 	<bean id="battery.voltage.warning" class="org.hbird.business.validation.parameter.LowerLimit">
 		<constructor-arg index="0" value="Low battery voltage warning"/>
 		<constructor-arg index="1" value=""/>
-		<constructor-arg index="2" value="10"/>
+		<constructor-arg index="2" value="11"/>
 	</bean>
 	
 	<bean id="battery.voltage.error" class="org.hbird.business.validation.parameter.LowerLimit">
 		<constructor-arg index="0" value="Low battery voltage error"/>
 		<constructor-arg index="1" value=""/>
-		<constructor-arg index="2" value="6"/>
+		<constructor-arg index="2" value="9"/>
 	</bean>
 
 	<bean id="state.of.video.stream.error" class="org.hbird.business.validation.parameter.UpperLimit">
@@ -48,7 +54,19 @@
 	</bean>
 
 	<bean id="state.of.video.deployment.error" class="org.hbird.business.validation.parameter.UpperLimit">
-		<constructor-arg index="0" value="Deployed payload error"/>
+		<constructor-arg index="0" value="Video deployment error"/>
+		<constructor-arg index="1" value=""/>
+		<constructor-arg index="2" value="0.5"/>
+	</bean>
+	
+	<bean id="main.switch.state.error" class="org.hbird.business.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="Main switch error"/>
+		<constructor-arg index="1" value=""/>
+		<constructor-arg index="2" value="0.5"/>
+	</bean>
+	
+	<bean id="transmitter.state.error" class="org.hbird.business.validation.parameter.LowerLimit">
+		<constructor-arg index="0" value="Transmitter error"/>
 		<constructor-arg index="1" value=""/>
 		<constructor-arg index="2" value="0.5"/>
 	</bean>
@@ -60,6 +78,12 @@
 		<route>
 			<from uri="activemq:topic:Parameters?selector=name='ELEVATION'" />
 			<to uri="bean:elevation.warning?method=processParameter" />
+			<to uri="activemq:topic:ParametersWarning" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='ELEVATION'" />
+			<to uri="bean:elevation.error?method=processParameter" />
 			<to uri="activemq:topic:ParametersError" />
 		</route>
 
@@ -99,13 +123,91 @@
 			<to uri="activemq:topic:ParametersError" />
 		</route>
 		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_MAIN_SWITCH'" />
+			<to uri="bean:main.switch.state.error?method=processParameter" />
+			<to uri="activemq:topic:ParametersError" />
+		</route>
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_TRANSMITTER'" />
+			<to uri="bean:transmitter.state.error?method=processParameter" />
+			<to uri="activemq:topic:ParametersError" />
+		</route>
+		
 		<!-- Routes for controlling the validators -->
 		<route>
-			<from uri="activemq:topic:Parameters?selector=name='BATTERY_VOLTAGE_UPDATE'" />
+			<from uri="activemq:topic:Parameters?selector=name='ELEVATION_WARNING_UPDATE'" />
+			<to uri="bean:elevation.warning?method=processLimit" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='ELEVATION_WARNING_SWITCH'" />
+			<to uri="bean:elevation.warning?method=processEnabled" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='ELEVATION_ERROR_UPDATE'" />
+			<to uri="bean:elevation.error?method=processLimit" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='ELEVATION_ERROR_SWITCH'" />
+			<to uri="bean:elevation.error?method=processEnabled" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='CPU_TEMPERATURE_WARNING_UPDATE'" />
+			<to uri="bean:cpu.temperature.warning?method=processLimit" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='CPU_TEMPERATURE_WARNING_SWITCH'" />
+			<to uri="bean:elevation.warning?method=processEnabled" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='CPU_TEMPERATURE_ERROR_UPDATE'" />
+			<to uri="bean:cpu.temperature.error?method=processLimit" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='CPU_TEMPERATURE_ERROR_SWITCH'" />
+			<to uri="bean:cpu.temperature.error?method=processEnabled" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='BATTERY_VOLTAGE_WARNING_UPDATE'" />
 			<to uri="bean:battery.voltage.warning?method=processLimit" />
 			<to uri="activemq:topic:ParametersSwitch" />
 		</route>
 		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='BATTERY_VOLTAGE_WARNING_SWITCH'" />
+			<to uri="bean:battery.voltage.warning?method=processEnabled" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='BATTERY_VOLTAGE_ERROR_UPDATE'" />
+			<to uri="bean:battery.voltage.error?method=processLimit" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+		
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='BATTERY_VOLTAGE_ERROR_SWITCH'" />
+			<to uri="bean:battery.voltage.error?method=processEnabled" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+				
 		<route>
 			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_VIDEO_STREAM_SWITCH'" />
 			<to uri="bean:state.of.video.stream.error?method=processEnabled" />
@@ -119,10 +221,16 @@
 		</route>
 		
 		<route>
-			<from uri="activemq:topic:Parameters?selector=name='ELEVATION_SWITCH'" />
-			<to uri="bean:elevation.warning?method=processEnabled" />
+			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_MAIN_SWITCH_SWITCH'" />
+			<to uri="bean:main.switch.state.error?method=processEnabled" />
 			<to uri="activemq:topic:ParametersSwitch" />
 		</route>
-		
+
+		<route>
+			<from uri="activemq:topic:Parameters?selector=name='STATE_OF_TRANSMITTER_SWITCH'" />
+			<to uri="bean:transmitter.state.error?method=processEnabled" />
+			<to uri="activemq:topic:ParametersSwitch" />
+		</route>
+	
 	</camelContext>
 </beans>

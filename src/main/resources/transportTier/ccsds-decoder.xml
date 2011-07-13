@@ -59,8 +59,7 @@
 					<when>
 						<simple>${header.type} == TMParameter</simple>
 						<filter>
-							<simple>${header.name} != 'CUBESAT_APID' and ${header.name} !=
-								'PACKET_LENGTH'</simple>
+							<simple>${header.name} != 'CUBESAT_APID' and ${header.name} != 'PACKET_LENGTH'</simple>
 							<to uri="activemq:topic:Parameters"></to>
 						</filter>
 					</when>

@@ -16,7 +16,7 @@
 
 	<!-- The beans required to simulate the satellite orbit. -->
 	<bean id="predictor" class="org.hbird.business.navigation.OrbitPredictor">
-		<constructor-arg index="0" value="src/main/webapp/WEB-INF" />
+		<constructor-arg index="0" value="src/main/resources/METADATA" />
 	</bean>
 
 	<!-- Satellite satellite, OrbitalState state, List<Location> locations -->

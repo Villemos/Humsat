@@ -33,42 +33,42 @@ public class ValidatorLimitUpdateTest extends ValidatorTest {
 		resultsError.reset();
 		resultsParameters.reset();
 		
-		// Send invalid parameter: 9 Volts is below Humsat's 10 Volts warning-limit.
+		// Send invalid parameter: 10.5 Volts is below Humsat's 11 Volts warning-limit.
 		Parameter invalidParameter = new Parameter("BATTERY_VOLTAGE", "This is an invalid battery voltage.",
-			System.currentTimeMillis(), 9, "Volts");
+			System.currentTimeMillis(), 10.5, "Volts");
 
 		producer.sendBodyAndHeader("activemq:topic:Parameters", invalidParameter, "name", "BATTERY_VOLTAGE");
 		
 		waitForMessagesInMockEndpoints(0, 1, 1, 1);
-		assertEquals("Warning-state of 9 Volt parameter is incorrect.", 
+		assertEquals("Warning-state of 10.5 Volt parameter is incorrect.", 
 			false, 
 			(boolean) resultsWarning.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
-		assertEquals("Error-state of 9 Volt parameter is incorrect.", 
+		assertEquals("Error-state of 10.5 Volt parameter is incorrect.", 
 			true, 
 			(boolean) resultsError.getReceivedExchanges().get(0).getIn().getBody(StateParameter.class).getStateValue());
 
-		// Set the new limit to 7 Volts.
-		Parameter stateChangeParameter = new Parameter("BATTERY_VOLTAGE_UPDATE",
-			"This is a change of the battery voltage limit.", System.currentTimeMillis(), 7, "Volts");
+		// Set the new limit to 10 Volts.
+		Parameter stateChangeParameter = new Parameter("BATTERY_VOLTAGE_WARNING_UPDATE",
+			"This is a change of the battery voltage limit.", System.currentTimeMillis(), 10, "Volts");
 
-		producer.sendBodyAndHeader("activemq:topic:Parameters", stateChangeParameter, "name", "BATTERY_VOLTAGE_UPDATE");
+		producer.sendBodyAndHeader("activemq:topic:Parameters", stateChangeParameter, "name", "BATTERY_VOLTAGE_WARNING_UPDATE");
 
 		waitForMessagesInMockEndpoints(1, 1, 1, 2);
 		assertEquals("Counter of received switch-parameters is incorrect.", 1, resultsSwitch.getReceivedCounter());
 
-		// Send valid parameter: 8 Volts is not below Humsat's new 7 Volts
+		// Send valid parameter: 10.6 Volts is not below Humsat's new 10 Volts
 		// warning-limit.
 		Parameter validParameter = new Parameter("BATTERY_VOLTAGE", "This is an valid battery voltage.",
-			System.currentTimeMillis(), 8, "Volts");
+			System.currentTimeMillis(), 10.6, "Volts");
 
 		producer.sendBodyAndHeader("activemq:topic:Parameters", validParameter, "name", "BATTERY_VOLTAGE");
 
 		waitForMessagesInMockEndpoints(1, 2, 2, 3);
 
-		assertEquals("Warning-state of 8 Volt parameter is incorrect.", 
+		assertEquals("Warning-state of 10.6 Volt parameter is incorrect.", 
 			true, 
 			(boolean) resultsWarning.getReceivedExchanges().get(1).getIn().getBody(StateParameter.class).getStateValue());
-		assertEquals("Error-state of 8 Volt parameter is incorrect.", 
+		assertEquals("Error-state of 10.6 Volt parameter is incorrect.", 
 			true, 
 			(boolean) resultsError.getReceivedExchanges().get(1).getIn().getBody(StateParameter.class).getStateValue());
 		assertEquals("Counter of received 'parameters' is incorrect.", 3, resultsParameters.getReceivedCounter());
