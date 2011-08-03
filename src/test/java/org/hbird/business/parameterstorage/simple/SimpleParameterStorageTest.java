@@ -138,7 +138,7 @@ public class SimpleParameterStorageTest extends AbstractJUnit4SpringContextTests
 		}
 
 		// Assert that the correct parameters have been retrieved from the database.
-		assertEquals("Wrong number parameters has been restored from database.", 2, result.getReceivedCounter());
+		assertEquals("Wrong number of parameters has been restored from database.", 2, result.getReceivedCounter());
 		
 		Map<Long,Parameter> receivedParameters = new HashMap<Long,Parameter>();
 		for(Exchange e : result.getReceivedExchanges()) {
@@ -148,7 +148,6 @@ public class SimpleParameterStorageTest extends AbstractJUnit4SpringContextTests
 		
 		assertEquals("The first retrieved Parameter has a faulty value.", testParameters[1].getValue(), receivedParameters.get(testParameters[1].getTimestamp()).getValue());
 		assertEquals("The second retrieved Parameter has a faulty value.", testParameters[2].getValue(), receivedParameters.get(testParameters[2].getTimestamp()).getValue());
-		
 		assertEquals("There should not appear a message in the error queue.", 0, failed.getReceivedCounter());
 	}
 
@@ -171,7 +170,7 @@ public class SimpleParameterStorageTest extends AbstractJUnit4SpringContextTests
 		}
 
 		// Assert that the correct parameters have been retrieved from the database.
-		assertEquals("Wrong number parameters has been restored from database.", 4, result.getReceivedCounter());
+		assertEquals("Wrong number of parameters has been restored from database.", 4, result.getReceivedCounter());
 		
 		Map<Long,Parameter> receivedParameters = new HashMap<Long,Parameter>();
 		for(Exchange e : result.getReceivedExchanges()) {
