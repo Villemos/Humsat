@@ -58,7 +58,7 @@ public class CommandingChainTest extends AbstractJUnit4SpringContextTests {
 	protected InMemoryParameterBuffer parameterBuffer = null;
 
 	@Autowired
-	protected CamelContext commandReleaserContext = null;
+	protected CamelContext commandingChainContext = null;
 
 	@Before
 	public void initialize() throws Exception {
@@ -68,7 +68,7 @@ public class CommandingChainTest extends AbstractJUnit4SpringContextTests {
 		parameterBuffer.storeParameter(new StateParameter("TestParameter3", "Description of test parameter 3", null, new Boolean(true)));
 		
 		// Add a route to access activemq:topic:ParametersWarning via a mock endpoint.
-		commandReleaserContext.addRoutes(new RouteBuilder() {
+		commandingChainContext.addRoutes(new RouteBuilder() {
 			public void configure() throws Exception {
 				from("activemq:queue:ReleasedCommands").to("mock:ResultsCommands");
 
@@ -102,7 +102,7 @@ public class CommandingChainTest extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testParameterInMemoryBufferStorage() throws InterruptedException {
 		//"activemq:topic:Parameters"
-		Exchange exchange = new DefaultExchange(commandReleaserContext);
+		Exchange exchange = new DefaultExchange(commandingChainContext);
 		exchange.getIn().setBody(new StateParameter("TestParameter4", "Description of test parameter 4", null, new Boolean(true)));
 		int parameterBufferParameterCount = parameterBuffer.getLatestParameterValue().size();
 		producerTopicParameters.send(exchange);
@@ -121,7 +121,7 @@ public class CommandingChainTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testParameterInMemoryBufferRetrieval() {
-		Exchange exchange = new DefaultExchange(commandReleaserContext, ExchangePattern.InOut);
+		Exchange exchange = new DefaultExchange(commandingChainContext, ExchangePattern.InOut);
 		exchange.getIn().setBody("TestParameter2");
 		producerDirectParameterRequests.send(exchange);
 
@@ -135,8 +135,9 @@ public class CommandingChainTest extends AbstractJUnit4SpringContextTests {
 	 * 
 	 * @throws InterruptedException
 	 */
-	//@Test
+	@Test
 	public void testCommandingChain() throws InterruptedException {
+	
 		// Create test-command
 		String name = "Set Transmitter State";
 		String description = "Will deploy the payload.";

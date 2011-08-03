@@ -22,13 +22,14 @@
 	
 	<bean id="task.executor" class="org.hbird.business.command.task.TaskExecutor"/>
 	
-<!-- 	<bean id="delayer" class="org.hbird.exchange.utilities.FieldBasedScheduler" -->
-<!-- 		p:fieldName="releaseTime" /> -->
+	<bean id="delayer" class="org.hbird.exchange.utilities.FieldBasedScheduler"
+		p:fieldName="releaseTime" />
 	
 	<camelContext id="commandingChainContext" xmlns="http://camel.apache.org/schema/spring"> 
 		<template id="producer"/>
 		
-		<!-- Route to receive and release commands. -->		
+		
+	<!-- 		Route to receive and release commands.		 -->
 		<route id="cr1" >
 			<from uri="activemq:queue:Commands" />
 			<split>
@@ -37,7 +38,7 @@
 	            <when>
 	                <simple>${body} is org.hbird.exchange.commanding.Command</simple>                
 	                <to uri="bean:header.mapper" />
-<!-- 	                <to uri="bean:delayer" /> -->
+	<!-- 	                <to uri="bean:delayer" /> -->
 					<to uri="activemq:queue:ScheduledCommands" />
 	            </when>
 				<when>
@@ -49,7 +50,7 @@
 		</route>
 		
 		<route>
-		 	<to uri="activemq:queue:ScheduledCommands" />
+		 	<from uri="activemq:queue:ScheduledCommands" />
 		 	<to uri="activemq:queue:ReleasedCommands" />
 		</route>
 		
